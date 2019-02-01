@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="description" content="cx's website">
+    <meta name="author" content="陈昕 <coccuscc@gmail.com>">
+    <link href="/static/images/favicon.ico" rel="icon">
+    <link href="/static/libs/metisMenu.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/libs/font-awesome.min.css" rel="stylesheet">
+    <script src="/static/libs/jquery.min.js"></script>
+    <script src="/static/libs/bootstrap.min.js" ></script>
+    <style>
+        p.time {color: #808080}
+        body {
+            padding-top: 50px;
+            background-image: url('/static/images/background.jpg');
+        }
+        h1 {font-family: inherit;}
+        h3.title {
+            font-family: STXingkai;
+            font-size: xx-large;
+        }
+        
+        button {
+            font-family: STHeiti;
+            opacity:0.8;
+        }
+        label {font-size: x-large}
+    </style>
+    <title><{block name=title}><{/block}></title>
+</head>
+
+
+<body>
+    <!--顶部栏-->
+    <{include 'main/templates/navbar.html'}>
+    <br><br><br>
+    <!--侧边栏-->
+    <div class="row">
+        <{include 'main/templates/sidebar.html'}>
+    <!--文章标题-->
+        <{block name=body}><{/block}>
+
+    <!--分页栏-->
+        <{block name=navigation}><{/block}>
+        <br>
+    </div>
+    <br>
+
+    <!--底部栏-->
+    <{include 'main/templates/footer.html'}>
+
+</body>
+
+</html>

@@ -1,0 +1,42 @@
+<{extends '../pages/page.html'}>
+<{block name=title}>文章列表总览<{/block}>
+<{block name=article_title}>
+    <div class="row">
+        <div class="col-md-8">
+
+            <{foreach $articles as $item}>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h3><a href="#"><{$item.title}></a></h3>
+                    <hr>
+                    <p><{$item.description}></p>
+                    <br><br><br><br>
+                    <ul class="list-inline">
+                        <li class="navbar-left">
+                            <p class="time">最后更新时间：<{$item.updated}></p>
+                        </li>
+                        <li class="navbar-right">
+                            <p class="text-right"><button class="btn btn-primary" type="button"> 阅读 <span class="glyphicon glyphicon-hand-up" aria-hidden="true"></span></button></p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <{/foreach}>
+
+        </div>
+    </div>
+    <br><br><br>
+<{/block}>
+<{block name=navigation}>
+    <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+        <nav aria-label="Page navigation">
+            <ul class="pager">
+                <li class="previous disabled"><a href="#"><span aria-hidden="true">&larr;</span> Previous</a></li>
+                <li class="next"><a href="#">Next <span aria-hidden="true">&rarr;</span></a></li>
+            </ul>
+        </nav>
+    </div>
+    </div>
+    <br>
+<{/block}>

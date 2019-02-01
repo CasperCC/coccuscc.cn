@@ -1,0 +1,26 @@
+<{extends '../pages/page.html'}>
+<{block name=title}>查询结果<{/block}>
+
+<{block name=article_title}>
+<div class="col-md-8">
+<{foreach $arttitle as $articles}>
+    <div class="panel panel-default">
+        <div class="panel-body">
+        <h3><a href="#"><{$articles.title}></a></h3>
+            <hr>
+            <p><{$articles.description}></p>
+            <br><br><br><br>
+            <ul class="list-inline">
+                <li class="navbar-left">
+                    <p class="time">最后更新时间：<{$articles.updated}></p>
+                </li>
+                <li class="navbar-right">
+                    <p class="text-right"><button class="btn btn-primary" type="button"> 阅读 <span class="glyphicon glyphicon-hand-up" aria-hidden="true"></span></button></p>
+                </li>
+            </ul>
+        </div>
+    </div>
+<{/foreach}>
+</div>
+
+<{/block}>
