@@ -17,9 +17,6 @@
             padding-top: 40px;
             background-image: url('/static/images/background.jpg');
         }
-        img{
-            padding-right: 0;
-        }
     </style>
 
     <title>登录页面</title>
@@ -36,23 +33,28 @@
                         <h3 class="panel-title">用户登录</h3>
                     </div>
                     <div class="panel-body">
-                        <form role="form">
                             <fieldset>
                                 <br>
                                 <div class="form-group">
                                     <input class="form-control" placeholder="用户名" name="usertag" type="text" autofocus>
                                 </div>
                                 <div class="form-group">
-                                    <input class="form-control" placeholder="Password" name="password" type="password" value="">
+                                    <input class="form-control" placeholder="密码" name="password" type="password">
                                 </div>
                                 <div class="form-group">
-                                    <input class="form-control" placeholder="验证码" name="imgcode" type="text">
-                                    <img src="/login/getcode" onclick="this.src='/login/getcode?'+Math.random();"></img>
+                                    <div class="col-md-9">
+                                        <div style="margin-left : -15px;">
+                                            <input class="form-control" placeholder="验证码" name="imgcode">
+                                        </div>
+                                    </div>
+                                    <div style="">
+                                        <img src="/login/getcode" onclick="this.src='/login/getcode?'+Math.random();"></img>
+                                    </div>
                                 </div>
-                                <button class="btn btn-lg btn-success btn-block" type="submit" name="login" formaction="/login/checklogin" formmethod="post">登录</button>
+                                <br>
+                                    <button class="btn btn-lg btn-success btn-block" id="login" type="submit" formaction="/login/checklogin" formmethod="post">登录</button>
                                 <br><br>
                             </fieldset>
-                        </form>
                     </div>
                 </div>
             </div>
@@ -103,11 +105,11 @@ $("#login").click(function() {
                 } else if ( ret == -3 ) {
                     layer.msg('账户名和密码错误');
                 } else {
-                    $(location).attr('href', '/coc');
+                    $(location).attr('href', '<{$redirect}>');
                 }
             },
             error: function() {
-                alert("请求失败！");
+                layer.msg("请求失败！");
             }
         });
     }
