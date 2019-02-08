@@ -22,7 +22,9 @@ class AdminBase_Controller extends CI_Controller {
         }
 
         $this->uid = $uid;
+        $this->nickname = $nickname;
 
+        $this->smarty->assign('nickname', $nickname);
     }
 
 }

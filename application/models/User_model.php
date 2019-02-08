@@ -7,8 +7,46 @@ class User_model extends CI_Model
         parent::__construct();
     }
 
-    public function get_user($username,$password)
-    {
+    public function getUserList($page, $size) {
+        $this->db->select('uid, username, nickname, email, locks, state, created, updated');
+        $this->db->where('state !=', '3');
+        $count = $this->db->count_all_results('users', FALSE);
+        $this->db->limit($size, ($page-1)*$size);
+        $userinfo = $this->db->get()->result_array();
+        foreach ($userinfo as &$value)
+        {
+            if($value["state"]==1)
+            {
+                $value["state"] = "正常";
+            }else if($value["state"]==2)
+            {
+                $value["state"] = "已冻结";
+            }else
+            {
+                $value["state"] = "";
+            }
+            $value["created"] = date("Y-m-d H:i:s", $value["created"]);
+            $value["updated"] = date("Y-m-d H:i:s", $value["updated"]);
+        }
+        return array(
+            'count' => $count,
+            'userinfo' => $userinfo
+        );
+    }
+
+    public function deleteUser($uid) {
+        if(!isset($uid)) {
+            return false;
+        }else {
+            $this->db->set('state', 3);
+            $this->db->set('updated', time());
+            $this->db->where('uid', $uid);
+            $this->db->update('users');
+            return true;
+        }
+    }
+
+    public function get_user($username,$password) {
         $this->load->helper('hashpass');
         $this->load->library('session');
 
@@ -30,14 +68,12 @@ class User_model extends CI_Model
 
         $userhash = get_hashpassword($userinfo["uid"],$userinfo["username"],$password,$userinfo["salt"],$userinfo["created"]); //用户输入的密码(哈希)
 
-        if(!isset($userinfo) || $userhash != $userinfo["hash_password"])
-        {
+        if(!isset($userinfo) || $userhash != $userinfo["hash_password"]) {
             $updateinfo = array(
                 'locks'   => $userinfo["locks"]+1,
                 'updated' => time()
             );
-            $this->db->update('users',$updateinfo);
-            $this->db->where('uid', $userinfo["uid"]);
+            $this->db->update('users',$updateinfo,'uid = '.$userinfo["uid"]);
 
             return false;
         }
@@ -48,14 +84,16 @@ class User_model extends CI_Model
             {
                 $this->session->nickname = $userinfo["username"];
             }
-            $this->session->nickname = $userinfo["nickname"];
+            else
+            {
+                $this->session->nickname = $userinfo["nickname"];
+            }
             $updateinfo = array(
                 'locks'   => '0',
                 'state'   => '1',
                 'updated' => time()
             );
-            $this->db->update('users',$updateinfo);
-            $this->db->where('uid', $userinfo["uid"]);
+            $this->db->update('users',$updateinfo,'uid = '.$userinfo["uid"]);
 
             return true;
         }

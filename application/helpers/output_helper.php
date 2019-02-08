@@ -1,6 +1,31 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+function list_return($count, $data)
+{
+    $ret = 0;
+    $msg = 'ok';
+    if (empty($data))
+    {
+        $output = array(
+            'ret' => $ret,
+            'msg' => $msg,
+            'count' => $count
+        );
+    }else
+    {
+        $output = array(
+            'ret' => $ret,
+            'msg' => $msg,
+            'count' => $count,
+            'data' => $data
+        );
+    }
+    header('Content-Type: application/json;charset=utf-8');
+    echo json_encode($output);
+    exit();
+}
+
 // 成功返回结果
 function success_return($data="") {
     $ret = 0;

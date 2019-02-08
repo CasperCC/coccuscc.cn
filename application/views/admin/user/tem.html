@@ -1,20 +1,20 @@
-<{extends 'admin/templates/base.html'}>
+<{extends 'admin/base/base.html'}>
+<{block name=title}>用户列表<{/block}>
 
-<{block name = css}>
-    <link href="https://cdn.bootcss.com/bootstrap-table/1.12.2/bootstrap-table.min.css" rel="stylesheet">
+<{block name="css"}>
+<link href="https://cdn.bootcss.com/bootstrap-table/1.12.1/bootstrap-table.min.css" rel="stylesheet">
+<style>.data-table th, .data-table td { text-align: center; vertical-align: middle!important; }</style>
 <{/block}>
 
-<{block name = title}>用户管理<{/block}>
-
-<{block name = body}>
-    <table id="list"></table>
+<{block name=body}>
+<table id="list" class="data-table"></table>
 <{/block}>
 
-<{block name = script}>
-    <script src="https://cdn.bootcss.com/bootstrap-table/1.12.1/bootstrap-table.min.js"></script>
-    <script src="https://cdn.bootcss.com/bootstrap-table/1.12.1/locale/bootstrap-table-zh-CN.min.js"></script>
-    <script>
-        var tempTableParams;
+<{block name="js"}>
+<script src="https://cdn.bootcss.com/bootstrap-table/1.12.1/bootstrap-table.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap-table/1.12.1/locale/bootstrap-table-zh-CN.min.js"></script>
+<script>
+var tempTableParams;
 $('#list').bootstrapTable({
     queryParamsType : 'undefined',
     queryParams: function queryParams(params) {
@@ -43,7 +43,7 @@ $('#list').bootstrapTable({
         });
     },
     cache: false,
-    pageSize: 5,
+    pageSize: 10,
     showRefresh: true,
     striped: true,
     pagination: true,
@@ -96,7 +96,7 @@ window.operateEvents = {
         }, function() {
             var uid = row.uid;
             $.ajax({
-                url: "/coc/user/deleteUser",
+                url: "/mgr/user/deleteuserbyuid",
                 dataType: "JSON",
                 type: "POST",
                 data: {
@@ -128,5 +128,5 @@ function operateFormatter(value, row, index) {
         '<button id="edit-row" type="button" class="btn btn-warning btn-xs">编辑</button>',
     ].join('');
 }
-    </script>
+</script>
 <{/block}>
