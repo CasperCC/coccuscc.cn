@@ -7,8 +7,7 @@ class User extends AdminBase_Controller {
         parent::__construct();
     }
 
-    public function getUserList()
-    {
+    public function getUserList() {
         $this->load->model('user_model');
 
         $page = $this->input->get("page");
@@ -18,8 +17,7 @@ class User extends AdminBase_Controller {
         list_return($users["count"], $users["userinfo"]);
     }
 
-    public function deleteUser()
-    {
+    public function deleteUser() {
         $this->load->model('user_model');
 
         $uid = $this->input->post("uid");
@@ -32,8 +30,17 @@ class User extends AdminBase_Controller {
         }
     }
 
-    public function list() {
+    public function edit() {
+        $this->load->model('user_model');
 
+        $uid = $this->input->get('uid');
+        $username = $this->user_model->getUserName($uid);
+
+        $this->smarty->assign('username', $username);
+        $this->smarty->display('admin/user/edit.html');
+    }
+
+    public function list() {
         $this->smarty->display('admin/user/list.html');
     }
 

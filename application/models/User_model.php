@@ -46,6 +46,18 @@ class User_model extends CI_Model
         }
     }
 
+    public function getUserName($uid) {
+        $this->db->from('users');
+        $this->db->select('username, nickname');
+        $this->db->where('uid', $uid);
+        $userinfo = $this->db->get()->row_array();
+        if (!isset($userinfo["nickname"])) {
+            $userinfo["nickname"] = $userinfo["username"];
+        }
+
+        return $userinfo;
+    }
+
     public function get_user($username,$password) {
         $this->load->helper('hashpass');
         $this->load->library('session');
