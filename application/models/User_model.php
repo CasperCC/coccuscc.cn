@@ -46,14 +46,25 @@ class User_model extends CI_Model
         }
     }
 
-    public function getUserName($uid) {
+    public function getUserInfo($uid) {
         $this->db->from('users');
-        $this->db->select('username, nickname');
+        $this->db->select('username, nickname, email, locks, state, created, updated');
         $this->db->where('uid', $uid);
         $userinfo = $this->db->get()->row_array();
+
         if (!isset($userinfo["nickname"])) {
             $userinfo["nickname"] = $userinfo["username"];
         }
+
+        if($userinfo["state"]==1) {
+                $userinfo["state"] = "正常";
+        }else if($userinfo["state"]==2) {
+            $userinfo["state"] = "已冻结";
+        }else {
+            $userinfo["state"] = "系统错误！";
+        }
+        $userinfo["created"] = date("Y-m-d H:i:s", $userinfo["created"]);
+        $userinfo["updated"] = date("Y-m-d H:i:s", $userinfo["updated"]);
 
         return $userinfo;
     }

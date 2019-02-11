@@ -45,9 +45,7 @@
                                             <input class="form-control" placeholder="验证码" name="imgcode">
                                         </div>
                                     </div>
-                                    <div style="">
                                         <img src="/login/getcode" onclick="this.src='/login/getcode?'+Math.random();"></img>
-                                    </div>
                                 </div>
                                 <br>
                                     <button class="btn btn-lg btn-success btn-block" id="login" type="submit" formaction="/login/checklogin" formmethod="post">登录</button>
@@ -88,31 +86,8 @@ $("#login").click(function() {
 
     if ( userTag == "" || password == "" || imgCode == "" ) {
         layer.msg('必填项不能为空');
-    } else {
-        $.ajax({
-            url:"/login/checklogin",
-            type: "POST",
-            data: {
-                "usertag": userTag,
-                "password": password,
-                "imgcode": imgCode
-            },
-            dataType: "json",
-            success: function(data) {
-                var ret = data.ret;
-                if ( ret == -2 ) {
-                    layer.msg('验证码错误');
-                } else if ( ret == -3 ) {
-                    layer.msg('账户名或密码错误');
-                } else {
-                    $(location).attr('href', '<{$redirect}>');
-                }
-            },
-            error: function() {
-                layer.msg("请求失败！");
-            }
-        });
     }
+
 });
 
 $("body").keydown(function(event) {

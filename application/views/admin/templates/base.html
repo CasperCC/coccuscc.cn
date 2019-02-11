@@ -21,7 +21,7 @@
 
     <div id="page-wrapper">
         <div class="row">
-            <div class="col-lg-12">
+            <div class="col-md-12">
                 <h3 class="page-header"><{block name=title}><{/block}></h3>
 
                     <{block name=body}><{/block}>
@@ -29,11 +29,12 @@
             </div>
         </div>
     </div>
-
+</div>
+<br>
     <{include 'admin/templates/copyright.html'}>
 
-</div>
-<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+
+<script src="/static/libs/jquery.min.js"></script>
 <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="https://cdn.bootcss.com/metisMenu/2.7.0/metisMenu.min.js"></script>
 <script src="/static/themes/sbadmin2/sbadmin2.min.js"></script>
@@ -43,3 +44,5 @@
 </body>
 
 </html>
+
+<{block name = js}><{/block}>

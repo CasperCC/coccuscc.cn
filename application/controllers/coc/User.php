@@ -34,10 +34,14 @@ class User extends AdminBase_Controller {
         $this->load->model('user_model');
 
         $uid = $this->input->get('uid');
-        $username = $this->user_model->getUserName($uid);
+        $userinfo = $this->user_model->getUserInfo($uid);
 
-        $this->smarty->assign('username', $username);
+        $this->smarty->assign('userinfo', $userinfo);
         $this->smarty->display('admin/user/edit.html');
+    }
+
+    public function updateUserInfo() {
+        echo "1";
     }
 
     public function list() {

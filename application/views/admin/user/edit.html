@@ -1,17 +1,100 @@
 <{extends 'admin/templates/base.html'}>
 
-<{block name = title}>编辑用户：<{$username.nickname}><{/block}>
+<{block name = title}>编辑用户：<{$userinfo.nickname}><{/block}>
 
 <{block name = body}>
 <div class="col-md-8">
     <div class="panel panel-default">
         <div class="panel-heading">
-            修改用户<{$username.nickname}>信息
+            修改用户信息 <em><small>*不输入即为不修改项*</small></em>
         </div>
         <div class="panel-body">
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <form class="form-horizontal">
+                <br>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">用户名：</label>
+                    <div class="col-md-7" style="margin-left: -14px">
+                        <input class="form-control" type="text" name="username" value="<{$userinfo.username}>">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">昵 称：</label>
+                    <div class="col-md-7" style="margin-left: -14px">
+                        <input class="form-control" type="text" name="nickname" value="<{$userinfo.nickname}>">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">旧密码：</label>
+                    <div class="col-md-7" style="margin-left: -14px">
+                        <input class="form-control" type="password" name="oldpassword" placeholder="请输入旧密码">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">新密码：</label>
+                    <div class="col-md-7" style="margin-left: -14px">
+                        <input class="form-control" type="password" name="newpassword" placeholder="请输入新密码">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">确认密码：</label>
+                    <div class="col-md-7" style="margin-left: -14px">
+                        <input class="form-control" type="password" name="checknewpassword" placeholder="请再次确认密码">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">邮 箱：</label>
+                    <p class="form-control-static"> <{$userinfo.email}></p>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">输错密码次数：</label>
+                    <p class="form-control-static"> <{$userinfo.locks}> 次</p>
+                    <div class="col-md-offset-8 col-sm-offset-8" style="margin-top: -32px">
+                        <!-- <button class="btn btn-default" type="button" id="unlock"> 清 零 </button> -->
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">用户状态：</label>
+                    <p class="form-control-static"> <{$userinfo.state}></p>
+                    <div class="col-md-offset-8 col-sm-offset-8" style="margin-top: -32px">
+                        <!-- <button class="btn btn-default" type="button" id="unfrozen"> 解 冻 </button> -->
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">用户创建时间：</label>
+                    <p class="form-control-static"> <{$userinfo.created}></p>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">最后活动时间：</label>
+                    <p class="form-control-static"> <{$userinfo.updated}></p>
+                </div>
+                <div class="col-md-3 col-md-offset-8 col-sm-offset-8">
+                <button class="btn btn-danger" id="save" type="submit" formaction="/coc/user/updateUserInfo" formmethod="post">确认并保存</button>
+            </form>
         </div>
     </div>
 </div>
+<{/block}>
+
+<{block name = js}>
+<script>
+$("#save").click(function() {
+    var userName = $("input[name='username']").val();
+    var nickName = $("input[name='nickname']").val();
+    var oldPassword = $("input[name='oldpassword']").val();
+    var newPassword = $("input[name='newpassword']").val();
+    var checkNewPassword = $("input[name='checknewpassword']").val();
+
+    // if ( newPassword != checkNewPassword ) {
+        layer.msg('两次密码不一致！请再次确认密码！');
+    // }
+});
+</script>
 
 <{/block}>
+
+
+
+
+
+
+
