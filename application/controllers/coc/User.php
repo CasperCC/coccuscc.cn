@@ -41,7 +41,21 @@ class User extends AdminBase_Controller {
     }
 
     public function updateUserInfo() {
-        echo "1";
+        $this->load->model('user_model');
+
+        $username = $this->input->post('username');
+        $nickname = $this->input->post('nickname');
+        $oldpassword = $this->input->post('oldpassword');
+        $newpassword = $this->input->post('newpassword');
+
+        $result = $this->user_model->editUser($username, $nickname, $oldpassword, $newpassword);
+
+        if ($result) {
+            success_return();
+        } else {
+            login_fail();
+        }
+
     }
 
     public function list() {

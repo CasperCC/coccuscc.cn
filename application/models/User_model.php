@@ -46,6 +46,30 @@ class User_model extends CI_Model
         }
     }
 
+    public function editUser($username, $nickname, $oldpassword, $newpassword) {
+        $this->load->helper('hashpass');
+
+        $this->db->from('users');
+        $this->db->select('uid, salt, hash_password, created');
+        $this->db->where('username', $username);
+        $userinfo = $this->db->get()->row_array();
+        $olduserhash = get_hashpassword($userinfo["uid"],$username,$oldpassword,$userinfo["salt"],$userinfo["created"]);
+        $newuserhash = get_hashpassword($userinfo["uid"],$username,$newpassword,$userinfo["salt"],$userinfo["created"]);
+
+        if (!isset($oldpassword) || $oldpassword == "") {
+            return true;
+        } elseif ($olduserhash != $userinfo["hash_password"]) {
+            return false;
+        } else {
+            $this->db->set('nickname', $nickname);
+            $this->db->set('hash_password', $newuserhash);
+            $this->db->set('updated', time());
+            $this->db->where('uid', $userinfo["uid"]);
+            $this->db->update('users');
+            return true;
+        }
+    }
+
     public function getUserInfo($uid) {
         $this->db->from('users');
         $this->db->select('username, nickname, email, locks, state, created, updated');

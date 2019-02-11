@@ -13,9 +13,7 @@
                 <br>
                 <div class="form-group">
                     <label class="col-md-3 control-label">用户名：</label>
-                    <div class="col-md-7" style="margin-left: -14px">
-                        <input class="form-control" type="text" name="username" value="<{$userinfo.username}>">
-                    </div>
+                    <p class="form-control-static"> <{$userinfo.username}></p>
                 </div>
                 <div class="form-group">
                     <label class="col-md-3 control-label">昵 称：</label>
@@ -48,15 +46,15 @@
                 <div class="form-group">
                     <label class="col-md-3 control-label">输错密码次数：</label>
                     <p class="form-control-static"> <{$userinfo.locks}> 次</p>
-                    <div class="col-md-offset-8 col-sm-offset-8" style="margin-top: -32px">
-                        <!-- <button class="btn btn-default" type="button" id="unlock"> 清 零 </button> -->
+                    <div class="col-md-offset-5 col-sm-offset-5" style="margin-top: -32px">
+                        <button class="btn btn-sm btn-default" type="button" id="unlock"> 清 零 </button>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-md-3 control-label">用户状态：</label>
                     <p class="form-control-static"> <{$userinfo.state}></p>
-                    <div class="col-md-offset-8 col-sm-offset-8" style="margin-top: -32px">
-                        <!-- <button class="btn btn-default" type="button" id="unfrozen"> 解 冻 </button> -->
+                    <div class="col-md-offset-5 col-sm-offset-5" style="margin-top: -32px">
+                        <button class="btn btn-sm btn-default" type="button" id="unfrozen"> 解 冻 </button>
                     </div>
                 </div>
                 <div class="form-group">
@@ -68,7 +66,7 @@
                     <p class="form-control-static"> <{$userinfo.updated}></p>
                 </div>
                 <div class="col-md-3 col-md-offset-8 col-sm-offset-8">
-                <button id="save" class="btn btn-danger" type="button" formaction="/coc/user/updateUserInfo" formmethod="post">确认并保存</button>
+                <button id="save" class="btn btn-danger" type="button">确认并保存</button>
             </form>
         </div>
     </div>
@@ -78,14 +76,41 @@
 <{block name = js}>
 <script>
 $("#save").click(function() {
-    var userName = $("input[name='username']").val();
+    var userName = "<{$userinfo.username}>";
     var nickName = $("input[name='nickname']").val();
     var oldPassword = $("input[name='oldpassword']").val();
     var newPassword = $("input[name='newpassword']").val();
     var checkNewPassword = $("input[name='checknewpassword']").val();
 
-    if ( newPassword != checkNewPassword ) {
+    if ( oldPassword == "" && (newPassword != "" || checkNewPassword != "")) {
+        layer.msg("请输入旧密码");
+    } else if ( oldPassword != "" && ( newPassword == "" || checkNewPassword == "" )) {
+        layer.msg("新密码不能为空！");
+    } else if ( newPassword != checkNewPassword ) {
         layer.msg('两次密码不一致！请再次确认密码！');
+    } else {
+        $.ajax({
+            url: "/coc/user/updateUserInfo",
+            type: "POST",
+            data: {
+                "username": userName,
+                "nickname": nickName,
+                "oldpassword": oldPassword,
+                "newpassword": newPassword
+            },
+            dataType: "json",
+            success: function(data){
+                var ret = data.ret;
+                if(ret == -3) {
+                    layer.msg("旧密码错误！");
+                } else {
+                    $(location).attr('href', '/coc/user/redirect');
+                }
+            },
+            error: function() {
+                layer.msg("请求失败！");
+            }
+        });
     }
 });
 </script>
