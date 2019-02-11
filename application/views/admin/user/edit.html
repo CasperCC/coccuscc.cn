@@ -54,7 +54,8 @@
                     <label class="col-md-3 control-label">用户状态：</label>
                     <p class="form-control-static"> <{$userinfo.state}></p>
                     <div class="col-md-offset-5 col-sm-offset-5" style="margin-top: -32px">
-                        <button class="btn btn-sm btn-default" type="button" id="unfrozen"> 解 冻 </button>
+                        <button class="btn btn-sm btn-default" type="button" id="frozen"> 冻 结 </button>
+                        <button class="btn btn-sm btn-default" type="button" id="unfrozen"> 解 锁 </button>
                     </div>
                 </div>
                 <div class="form-group">
@@ -66,7 +67,7 @@
                     <p class="form-control-static"> <{$userinfo.updated}></p>
                 </div>
                 <div class="col-md-3 col-md-offset-8 col-sm-offset-8">
-                <button id="save" class="btn btn-danger" type="button">确认并保存</button>
+                <button id="save" class="btn btn-danger" type="button">确认并保存修改</button>
             </form>
         </div>
     </div>
@@ -75,6 +76,89 @@
 
 <{block name = js}>
 <script>
+$("#unlock").click(function() {
+
+    layer.confirm('请确认是否清零？', {
+        btn: ['确认','取消']
+    }, function() {
+        var userName = "<{$userinfo.username}>";
+        $.ajax({
+            url: "/coc/user/unlock",
+            dataType: "JSON",
+            type: "POST",
+            data: { "username" : userName },
+            success: function(data){
+                var ret = data.ret;
+                if (ret == 0) {
+                    window.location.reload();
+                } else {
+                    layer.msg('操作失败！请重试');
+                }
+            },
+            error: function() {
+                layer.msg("请求失败！");
+            }
+        });
+    }, function(){
+        layer.msg("已取消");
+    });
+
+});
+
+$("#frozen").click(function() {
+    layer.confirm('请确认是否冻结？', {
+        btn: ['确认','取消']
+    }, function() {
+        var userName = "<{$userinfo.username}>";
+        $.ajax({
+            url: "/coc/user/frozen",
+            dataType: "JSON",
+            type: "POST",
+            data: { "username" : userName },
+            success: function(data){
+                var ret = data.ret;
+                if (ret == 0) {
+                    window.location.reload();
+                } else {
+                    layer.msg('操作失败！请重试');
+                }
+            },
+            error: function() {
+                layer.msg("请求失败！");
+            }
+        });
+    }, function(){
+        layer.msg("已取消");
+    });
+});
+
+$("#unfrozen").click(function() {
+    layer.confirm('请确认是否解锁？', {
+        btn: ['确认','取消']
+    }, function() {
+        var userName = "<{$userinfo.username}>";
+        $.ajax({
+            url: "/coc/user/unfrozen",
+            dataType: "JSON",
+            type: "POST",
+            data: { "username" : userName },
+            success: function(data){
+                var ret = data.ret;
+                if (ret == 0) {
+                    window.location.reload();
+                } else {
+                    layer.msg('操作失败！请重试');
+                }
+            },
+            error: function() {
+                layer.msg("请求失败！");
+            }
+        });
+    }, function(){
+        layer.msg("已取消");
+    });
+});
+
 $("#save").click(function() {
     var userName = "<{$userinfo.username}>";
     var nickName = $("input[name='nickname']").val();
@@ -83,33 +167,40 @@ $("#save").click(function() {
     var checkNewPassword = $("input[name='checknewpassword']").val();
 
     if ( oldPassword == "" && (newPassword != "" || checkNewPassword != "")) {
-        layer.msg("请输入旧密码");
+        layer.msg('请输入旧密码'), function(){};
     } else if ( oldPassword != "" && ( newPassword == "" || checkNewPassword == "" )) {
         layer.msg("新密码不能为空！");
     } else if ( newPassword != checkNewPassword ) {
         layer.msg('两次密码不一致！请再次确认密码！');
     } else {
-        $.ajax({
-            url: "/coc/user/updateUserInfo",
-            type: "POST",
-            data: {
-                "username": userName,
-                "nickname": nickName,
-                "oldpassword": oldPassword,
-                "newpassword": newPassword
-            },
-            dataType: "json",
-            success: function(data){
-                var ret = data.ret;
-                if(ret == -3) {
-                    layer.msg("旧密码错误！");
-                } else {
-                    $(location).attr('href', '/coc/user/redirect');
+        layer.confirm('请确认是否保存修改？', {
+        btn: ['确认','取消']
+        }, function() {
+            $.ajax({
+                url: "/coc/user/updateUserInfo",
+                type: "POST",
+                data: {
+                    "username": userName,
+                    "nickname": nickName,
+                    "oldpassword": oldPassword,
+                    "newpassword": newPassword
+                },
+                dataType: "json",
+                success: function(data){
+                    var ret = data.ret;
+                    if(ret == -3) {
+                        layer.msg("旧密码错误！");
+                    } else {
+                        layer.msg("操作成功！");
+                        $(location).attr('href', '/coc/user/redirect');
+                    }
+                },
+                error: function() {
+                    layer.msg("请求失败！");
                 }
-            },
-            error: function() {
-                layer.msg("请求失败！");
-            }
+            });
+        },function() {
+            layer.msg('已取消');
         });
     }
 });

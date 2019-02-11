@@ -7,6 +7,30 @@ class User_model extends CI_Model
         parent::__construct();
     }
 
+    public function clearLocks($username) {
+        $this->db->set('locks', 0);
+        $this->db->set('updated', time());
+        $this->db->where('username', $username);
+        $this->db->update('users');
+        return true;
+    }
+
+    public function frozen($username) {
+        $this->db->set('state', 2);
+        $this->db->set('updated', time());
+        $this->db->where('username', $username);
+        $this->db->update('users');
+        return true;
+    }
+
+    public function unfrozen($username) {
+        $this->db->set('state', 1);
+        $this->db->set('updated', time());
+        $this->db->where('username', $username);
+        $this->db->update('users');
+        return true;
+    }
+
     public function getUserList($page, $size) {
         $this->db->select('uid, username, nickname, email, locks, state, created, updated');
         $this->db->where('state !=', '3');

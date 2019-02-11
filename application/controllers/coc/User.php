@@ -55,7 +55,52 @@ class User extends AdminBase_Controller {
         } else {
             login_fail();
         }
+    }
 
+    public function redirect() {
+        $this->smarty->display('admin/user/redirect.html');
+    }
+
+    public function unlock() {
+        $this->load->model('user_model');
+
+        $username = $this->input->post('username');
+
+        $result = $this->user_model->clearLocks($username);
+
+        if ($result) {
+            success_return();
+        } else{
+            miss_params();
+        }
+    }
+
+    public function frozen() {
+        $this->load->model('user_model');
+
+        $username = $this->input->post('username');
+
+        $result = $this->user_model->frozen($username);
+
+        if ($result) {
+            success_return();
+        } else{
+            miss_params();
+        }
+    }
+
+    public function unfrozen() {
+        $this->load->model('user_model');
+
+        $username = $this->input->post('username');
+
+        $result = $this->user_model->unfrozen($username);
+
+        if ($result) {
+            success_return();
+        } else{
+            miss_params();
+        }
     }
 
     public function list() {
