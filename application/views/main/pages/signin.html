@@ -86,6 +86,30 @@ $("#login").click(function() {
 
     if ( userTag == "" || password == "" || imgCode == "" ) {
         layer.msg('必填项不能为空');
+    } else {
+        $.ajax({
+            url:"/login/checklogin",
+            type: "POST",
+            data: {
+                "usertag": userTag,
+                "password": password,
+                "imgcode": imgCode
+            },
+            dataType: "json",
+            success: function(data) {
+                var ret = data.ret;
+                if ( ret == -2 ) {
+                    layer.msg('验证码错误');
+                } else if ( ret == -3 ) {
+                    layer.msg('账户名或密码错误');
+                } else {
+                    $(location).attr('href', '<{$redirect}>');
+                }
+            },
+            error: function() {
+                layer.msg("请求失败！");
+            }
+        });
     }
 
 });

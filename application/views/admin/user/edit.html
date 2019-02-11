@@ -68,7 +68,7 @@
                     <p class="form-control-static"> <{$userinfo.updated}></p>
                 </div>
                 <div class="col-md-3 col-md-offset-8 col-sm-offset-8">
-                <button class="btn btn-danger" id="save" type="submit" formaction="/coc/user/updateUserInfo" formmethod="post">确认并保存</button>
+                <button id="save" class="btn btn-danger" type="button" formaction="/coc/user/updateUserInfo" formmethod="post">确认并保存</button>
             </form>
         </div>
     </div>
@@ -84,9 +84,9 @@ $("#save").click(function() {
     var newPassword = $("input[name='newpassword']").val();
     var checkNewPassword = $("input[name='checknewpassword']").val();
 
-    // if ( newPassword != checkNewPassword ) {
+    if ( newPassword != checkNewPassword ) {
         layer.msg('两次密码不一致！请再次确认密码！');
-    // }
+    }
 });
 </script>
 
