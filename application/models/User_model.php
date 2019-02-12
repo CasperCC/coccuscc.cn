@@ -6,7 +6,7 @@ class User_model extends CI_Model
     {
         parent::__construct();
     }
-
+    //锁定计数清零(超级账户功能)
     public function clearLocks($username) {
         $this->db->set('locks', 0);
         $this->db->set('updated', time());
@@ -14,7 +14,7 @@ class User_model extends CI_Model
         $this->db->update('users');
         return true;
     }
-
+    //冻结账户(超级账户功能)
     public function frozen($username) {
         $this->db->set('state', 2);
         $this->db->set('updated', time());
@@ -22,7 +22,7 @@ class User_model extends CI_Model
         $this->db->update('users');
         return true;
     }
-
+    //解冻账户(超级账户功能)
     public function unfrozen($username) {
         $this->db->set('state', 1);
         $this->db->set('updated', time());
@@ -30,7 +30,7 @@ class User_model extends CI_Model
         $this->db->update('users');
         return true;
     }
-
+    //获取用户信息列表(超级账户功能)
     public function getUserList($page, $size) {
         $this->db->select('uid, username, nickname, email, locks, state, created, updated');
         $this->db->where('state !=', '3');
@@ -57,7 +57,7 @@ class User_model extends CI_Model
             'userinfo' => $userinfo
         );
     }
-
+    //删除账户(超级账户功能)
     public function deleteUser($uid) {
         if(!isset($uid)) {
             return false;
@@ -69,7 +69,7 @@ class User_model extends CI_Model
             return true;
         }
     }
-
+    //更改账户信息(超级账户功能)
     public function editUser($username, $nickname, $oldpassword, $newpassword) {
         $this->load->helper('hashpass');
 
@@ -94,6 +94,38 @@ class User_model extends CI_Model
         }
     }
 
+    //更改用户信息(暂时只支持更改昵称功能)
+    public function alterUserInfo($uid, $nickname) {
+        $this->db->set('nickname', $nickname);
+        $this->db->set('updated', time());
+        $this->db->where('uid', $uid);
+        $this->db->update('users');
+        return true;
+    }
+
+    public function alterPassword($uid, $oldpassword, $newpassword)
+    {
+        $this->load->helper('hashpass');
+
+        $this->db->from('users');
+        $this->db->select('username, salt, hash_password, created');
+        $this->db->where('uid', $uid);
+        $userinfo = $this->db->get()->row_array();
+        $olduserhash = get_hashpassword($uid,$userinfo["username"],$oldpassword,$userinfo["salt"],$userinfo["created"]);
+        $newuserhash = get_hashpassword($uid,$userinfo["username"],$newpassword,$userinfo["salt"],$userinfo["created"]);
+
+        if ($olduserhash != $userinfo["hash_password"]) {
+            return false;
+        } else {
+            $this->db->set('hash_password', $newuserhash);
+            $this->db->set('updated', time());
+            $this->db->where('uid', $uid);
+            $this->db->update('users');
+            return true;
+        }
+    }
+
+    //获取用户信息
     public function getUserInfo($uid) {
         $this->db->from('users');
         $this->db->select('username, nickname, email, locks, state, created, updated');
@@ -116,7 +148,7 @@ class User_model extends CI_Model
 
         return $userinfo;
     }
-
+    //检查账户信息是否匹配
     public function get_user($username,$password) {
         $this->load->helper('hashpass');
         $this->load->library('session');

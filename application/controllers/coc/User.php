@@ -6,8 +6,9 @@ class User extends AdminBase_Controller {
     function __construct() {
         parent::__construct();
     }
-
+    //获取用户信息列表(超级账户功能)
     public function getUserList() {
+        $this->checkSvip();
         $this->load->model('user_model');
 
         $page = $this->input->get("page");
@@ -16,8 +17,9 @@ class User extends AdminBase_Controller {
         $users = $this->user_model->getUserList($page, $size);
         list_return($users["count"], $users["userinfo"]);
     }
-
+    //删除账户(超级账户功能)
     public function deleteUser() {
+        $this->checkSvip();
         $this->load->model('user_model');
 
         $uid = $this->input->post("uid");
@@ -29,8 +31,9 @@ class User extends AdminBase_Controller {
             miss_params();
         }
     }
-
+    //显示编辑用户信息页面(超级账户功能)
     public function edit() {
+        $this->checkSvip();
         $this->load->model('user_model');
 
         $uid = $this->input->get('uid');
@@ -39,8 +42,9 @@ class User extends AdminBase_Controller {
         $this->smarty->assign('userinfo', $userinfo);
         $this->smarty->display('admin/user/edit.html');
     }
-
+    //编辑用户信息(超级账户功能)
     public function updateUserInfo() {
+        $this->checkSvip();
         $this->load->model('user_model');
 
         $username = $this->input->post('username');
@@ -56,12 +60,9 @@ class User extends AdminBase_Controller {
             login_fail();
         }
     }
-
-    public function redirect() {
-        $this->smarty->display('admin/user/redirect.html');
-    }
-
+    //解锁账户(超级账户功能)
     public function unlock() {
+        $this->checkSvip();
         $this->load->model('user_model');
 
         $username = $this->input->post('username');
@@ -74,8 +75,9 @@ class User extends AdminBase_Controller {
             miss_params();
         }
     }
-
+    //冻结账户(超级账户功能)
     public function frozen() {
+        $this->checkSvip();
         $this->load->model('user_model');
 
         $username = $this->input->post('username');
@@ -88,8 +90,9 @@ class User extends AdminBase_Controller {
             miss_params();
         }
     }
-
+    //解冻账户(超级账户功能)
     public function unfrozen() {
+        $this->checkSvip();
         $this->load->model('user_model');
 
         $username = $this->input->post('username');
@@ -104,10 +107,12 @@ class User extends AdminBase_Controller {
     }
 
     public function list() {
+        $this->checkSvip();
         $this->smarty->display('admin/user/list.html');
     }
 
     public function add() {
+        $this->checkSvip();
         $this->smarty->display('admin/user/add.html');
     }
 }

@@ -23,6 +23,10 @@ class Login extends CI_Controller {
         redirect('/login');
     }
 
+    public function register() {
+        $this->smarty->display('admin/alter/register.html');
+    }
+
     public function getcode(){
         $this->load->library('session');
         $this->load->library('captcha');

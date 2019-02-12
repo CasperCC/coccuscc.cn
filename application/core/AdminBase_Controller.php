@@ -9,7 +9,7 @@ class AdminBase_Controller extends CI_Controller {
         $this->_checkseccion();
     }
 
-    private function _checkseccion(){
+    private function _checkseccion() {
 
         $this->load->library('session');
         $this->load->helper('url');
@@ -26,5 +26,13 @@ class AdminBase_Controller extends CI_Controller {
 
         $this->smarty->assign('nickname', $nickname);
     }
+
+    public function checkSvip() {
+    $svip = $this->uid;
+    if ($svip != 1) {
+        $this->smarty->display('admin/nosvip.html');
+        exit();
+    }
+}
 
 }

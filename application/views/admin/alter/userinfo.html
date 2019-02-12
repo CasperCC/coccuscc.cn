@@ -1,0 +1,79 @@
+<{extends 'admin/templates/base.html'}>
+
+<{block name = title}>修改账户信息<{/block}>
+
+<{block name = body}>
+<div class="col-md-8">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            修改账户信息
+        </div>
+        <div class="panel-body">
+            <form class="form-horizontal">
+                <br>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">用户名：</label>
+                    <p class="form-control-static"> <{$userinfo.username}></p>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">昵 称：</label>
+                    <div class="col-md-7" style="margin-left: -14px">
+                        <input class="form-control" type="text" name="nickname" value="<{$userinfo.nickname}>">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">邮 箱：</label>
+                    <p class="form-control-static"> <{$userinfo.email}></p>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">用户创建时间：</label>
+                    <p class="form-control-static"> <{$userinfo.created}></p>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">最后活动时间：</label>
+                    <p class="form-control-static"> <{$userinfo.updated}></p>
+                </div>
+                <div class="col-md-3 col-md-offset-8 col-sm-offset-8">
+                <button id="save" class="btn btn-danger" type="button">确认并保存修改</button>
+            </form>
+        </div>
+    </div>
+</div>
+<{/block}>
+
+<{block name = js}>
+<script>
+    $("#save").click(function() {
+    var nickName = $("input[name='nickname']").val();
+
+    layer.confirm('请确认是否保存修改？', {
+    btn: ['确认','取消']
+    }, function() {
+        $.ajax({
+            url: "/coc/Profile/updateUserInfo",
+            type: "POST",
+            data: {
+                "nickname": nickName
+            },
+            dataType: "json",
+            success: function(data){
+                var ret = data.ret;
+                if(ret == 0) {
+                    layer.msg('操作成功！正在为您跳转到后台总览', {
+                        icon: 1,
+                        time: 2000
+                    }, function() {
+                        $(location).attr('href', '/coc');
+                    });
+                }
+            },
+            error: function() {
+                layer.msg("请求失败！");
+            }
+        });
+    },function() {
+        layer.msg('已取消');
+    });
+});
+</script>
+<{/block}>

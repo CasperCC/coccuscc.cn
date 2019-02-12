@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="description" content="cx's website">
+    <meta name="author" content="陈昕 <coccuscc@gmail.com>">
+    <link href="/static/images/favicon.ico" rel="icon">
+    <link href="/static/libs/metisMenu.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/layer/2.3/skin/layer.css" rel="stylesheet">
+    <style>
+        body {
+            background-image: url('/static/images/background.jpg');
+        }
+        h1.title {
+            font-family: serif;
+            font-size: 40px;
+        }
+        h2.title {
+            font-family: cursive;
+            font-size: 25px;
+        }
+    </style>
+
+    <title>登录页面</title>
+</head>
+
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <h1 class="title">欢迎注册</h1>
+                <h2 class="title">过往不恋，未来不迎，当下不负，如此安好。</h2><br>
+                <div class="login-panel panel panel-default">
+                    <div class="panel-body">
+                        <fieldset>
+                            <br>
+                            <div class="form-group">
+                                <div class="col-md-9" style="margin-left: 65px;">
+                                    <input id="username" class="form-control" placeholder="用户名" name="username" type="text" autofocus>
+                                </div>
+                            </div><br><br>
+                            <div class="form-group">
+                                <div class="col-md-9" style="margin-left: 65px;">
+                                    <input id="email" class="form-control" placeholder="邮箱" name="email" type="email">
+                                </div>
+                            </div><br><br>
+                            <div class="form-group">
+                                <div class="col-md-9" style="margin-left: 65px;">
+                                    <input class="form-control" placeholder="昵称" name="nickname" type="text">
+                                </div>
+                            </div><br><br>
+                            <div class="form-group">
+                                <div class="col-md-9" style="margin-left: 65px;">
+                                    <input class="form-control" placeholder="请输入密码" name="newpassword" type="password">
+                                </div>
+                            </div><br><br>
+                            <div class="form-group">
+                                <div class="col-md-9" style="margin-left: 65px;">
+                                    <input class="form-control" placeholder="请再次输入密码" name="checknewpassword" type="password">
+                                </div>
+                            </div><br><br>
+                            <div class="form-group">
+                                <div class="col-md-7" style="margin-left: 65px;">
+                                    <input class="form-control" placeholder="验证码" name="imgcode">
+                                </div>
+                                <img src="/login/getcode" onclick="this.src='/login/getcode?'+Math.random();"></img>
+                            </div>
+                            <br>
+                            <div class="col-md-9" style="margin-left: 65px;">
+                                <button class="btn btn-lg btn-info btn-block" id="login" type="button">立即注册</button>
+                            </div>
+                                <br>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--底部栏-->
+    <footer class="bs-docs-footer">
+        <hr>
+        <div class="alert alert-default" role="alert">
+            <p class="text-center">Copyright &copy; 2018
+            <script>
+            var currentYear = new Date().getFullYear();
+            if ( currentYear > 2018 ) {
+                document.write('- '+currentYear);
+            }</script> All Rights Reserved.备案号：<a href="http://www.miitbeian.gov.cn">粤ICP备18093628号-1</a></a>
+        </div>
+    </footer>
+
+    <script src="/static/libs/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
+
+</body>
+
+</html>
+
+<script>
+    $('#username').click(function() {
+        layer.tips('用户名一旦注册就不可更改！', '#username', {tips: [2, '#A52A2A'], tipsMore: true});
+    });
+    $('#email').click(function() {
+        layer.tips('邮箱一旦注册暂不支持更改！', '#email', {tips: [2, '#000000'], tipsMore: true});
+    });
+</script>
