@@ -69,6 +69,53 @@ class User_model extends CI_Model
             return true;
         }
     }
+
+    public function addUser($username, $email, $nickname, $password) {
+        $this->load->helper('hashpass');
+
+        // 检查用户名是否存在
+        $this->db->from('users');
+        $this->db->where('username', $username);
+        $usertag = $this->db->get()->row_array();
+        if (isset($usertag)) {
+            return -5;
+        }
+
+        // 检查邮箱是否存在
+        $this->db->from('users');
+        $this->db->where('email', $email);
+        $useremail = $this->db->get()->row_array();
+        if (isset($useremail)) {
+            return -6;
+        }
+
+        $salt = getRandomStr(32, false);
+        $userinfo = array(
+            'username' => $username,
+            'nickname' => $nickname,
+            'email' => $email,
+            'salt' => $salt,
+            'created' => time(),
+            'updated' => time()
+        );
+        $this->db->insert('users', $userinfo);
+
+        // 获取新用户uid和创建时间
+        $this->db->from('users');
+        $this->db->select('uid, created');
+        $this->db->where('username', $username);
+        $user = $this->db->get()->row_array();
+
+        $hashpass = get_hashpassword($user["uid"], $username, $password, $salt, $user["created"]);
+
+        // 更新用户密码
+        $this->db->set('hash_password', $hashpass);
+        $this->db->where('uid', $user["uid"]);
+        $this->db->update('users');
+
+        return true;
+    }
+
     //更改账户信息(超级账户功能)
     public function editUser($username, $nickname, $oldpassword, $newpassword) {
         $this->load->helper('hashpass');

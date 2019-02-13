@@ -112,7 +112,6 @@ class User extends AdminBase_Controller {
     }
 
     public function add() {
-        $this->checkSvip();
         $this->smarty->display('admin/user/add.html');
     }
 }

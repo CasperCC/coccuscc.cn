@@ -3,5 +3,122 @@
 <{block name = title}>用户管理<{/block}>
 
 <{block name = body}>
-    创建用户
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 col-md-offset-1">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">创建用户</h3>
+                    </div>
+                    <div class="panel-body">
+                        <fieldset>
+                            <br>
+                            <div class="form-group">
+                                <div class="col-md-10 col-md-offset-1">
+                                    <input id="username" class="form-control" placeholder="用户名" name="username" type="text" autofocus>
+                                </div>
+                            </div><br><br>
+                            <div class="form-group">
+                                <div class="col-md-10 col-md-offset-1">
+                                    <input id="email" class="form-control" placeholder="邮箱" name="email" type="email">
+                                </div>
+                            </div><br><br>
+                            <div class="form-group">
+                                <div class="col-md-10 col-md-offset-1">
+                                    <input id="nickname" class="form-control" placeholder="昵称" name="nickname" type="text">
+                                </div>
+                            </div><br><br>
+                            <div class="form-group">
+                                <div class="col-md-10 col-md-offset-1">
+                                    <input class="form-control" placeholder="请输入密码" name="newpassword" type="password">
+                                </div>
+                            </div><br><br>
+                            <div class="form-group">
+                                <div class="col-md-10 col-md-offset-1">
+                                    <input class="form-control" placeholder="请再次输入密码" name="checknewpassword" type="password">
+                                </div>
+                            </div><br><br>
+                            <div class="form-group">
+                                <div class="col-md-7 col-md-offset-1">
+                                    <input class="form-control" placeholder="验证码" name="imgcode">
+                                </div>
+                                <img src="/login/getcode" onclick="this.src='/login/getcode?'+Math.random();"></img>
+                            </div>
+                            <br>
+                            <div class="col-md-10 col-md-offset-1">
+                                <button class="btn btn-lg btn-info btn-block" id="register" type="button">立即创建</button>
+                            <br></div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<{/block}>
+
+<{block name = js}>
+<script>
+    $('#username').click(function() {
+        layer.tips('用户名一旦注册就不可更改！', '#username', {tips: [2, '#A52A2A'], tipsMore: true});
+    });
+    $('#email').click(function() {
+        layer.tips('邮箱一旦注册暂不支持更改！', '#email', {tips: [2, '#000000'], tipsMore: true});
+    });
+    $('#nickname').click(function() {
+        layer.tips('非必填项，默认为用户名', '#nickname', {tips: [2, '#0000CD'], tipsMore: true});
+    });
+
+    $('#register').click(function() {
+        var userName = $("input[name='username']").val();
+        var email = $("input[name='email']").val();
+        var nickName = $("input[name='nickname']").val();
+        var newPassword = $("input[name='newpassword']").val();
+        var checkNewpassword = $("input[name='checknewpassword']").val();
+        var imgCode = $("input[name='imgcode']").val();
+
+        if (userName == "" || email == "" || newPassword == "" || checkNewpassword == "" || imgCode == "") {
+            layer.msg('必填项不能为空！');
+        } else if (newPassword != checkNewpassword) {
+            layer.msg('密码不一致！请重新输入！', {icon : 4});
+        } else {
+            $.ajax({
+                url: "/login/register",
+                type: "POST",
+                dataType: "JSON",
+                data: {
+                    "username": userName,
+                    "email": email,
+                    "nickname": nickName,
+                    "password": newPassword,
+                    "captcha": imgCode
+                },
+                success: function(data) {
+                    var ret = data.ret;
+                    if (ret == -2) {
+                        layer.msg('验证码错误', {icon: 2});
+                    } else if (ret == -5) {
+                        layer.tips('该用户名已存在！', '#username', {tips: [2, '#A52A2A'], tipsMore: true});
+                    } else if (ret == -6) {
+                        layer.tips('该邮箱已存在！', '#email', {tips: [2, '#A52A2A'], tipsMore: true});
+                    } else if (ret == -4 || ret == -1) {
+                        layer.msg('注册失败');
+                    } else {
+                        layer.msg('注册成功！', {
+                            time: 2000
+                        });
+                    }
+                },
+                error: function() {
+                    layer.msg("请求失败！");
+                }
+            });
+        }
+    });
+
+$("body").keydown(function(event) {
+    if (event.keyCode == "13") {
+        $("#register").click();
+    }
+});
+</script>
 <{/block}>

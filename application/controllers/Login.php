@@ -3,18 +3,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Login extends CI_Controller {
 
-    public function __construct(){
+    public function __construct() {
         parent::__construct();
     }
 
-    public function index(){
+    public function index() {
         $redirect = $this->input->get("redirect") ? $this->input->get("redirect") : "/coc";
 
         $this->smarty->assign('redirect', $redirect);
         $this->smarty->display('main/pages/signin.html');
     }
 
-    public function out(){
+    public function out() {
         $this->load->library('session');
         $this->load->helper('url');
 
@@ -22,8 +22,8 @@ class Login extends CI_Controller {
         $this->session->unset_userdata('nickname');
         redirect('/login');
     }
-
-    public function register() {
+    // 注册页面
+    public function registerView() {
         $this->smarty->display('admin/alter/register.html');
     }
 
@@ -35,7 +35,45 @@ class Login extends CI_Controller {
         $this->session->captcha = $captcha_value;
     }
 
-    public function checklogin(){
+    public function register() {
+        $this->load->library('session');
+        $this->load->model('user_model');
+
+        $username = $this->input->post('username');
+        $email = $this->input->post('email');
+        $nickname = $this->input->post('nickname');
+        $password = $this->input->post('password');
+        $captcha = $this->input->post('captcha');
+
+        if (!isset($nickname) || $nickname == "") {
+            $nickname = NULL;
+        }
+
+        // 检查用户名/邮箱/密码/验证码是否为空
+        if(!isset($username) || !isset($email) || !isset($password) || !isset($captcha)) {
+            miss_params();
+        }
+
+        // 检查验证码
+        if (strtolower($captcha) != strtolower($this->session->captcha)) {
+            imgcode_error();
+        }
+
+        $result = $this->user_model->addUser($username, $email, $nickname, $password);
+
+        if (!$result) {
+            db_error();
+        } elseif ($result == -5) {
+            username_exist();
+        } elseif ($result == -6) {
+            email_exist();
+        } else {
+            $this->session->unset_userdata('captcha');
+            success_return();
+        }
+    }
+
+    public function checklogin() {
         $this->load->library('session');
         $this->load->model('user_model');
         $this->load->helper('hashpass');
@@ -45,18 +83,18 @@ class Login extends CI_Controller {
         $captcha = $this->input->post('imgcode'); //用户输入的验证码
 
         // 检查用户名/密码/验证码是否为空
-        if(!isset($username) || !isset($password) || !isset($captcha)){
+        if(!isset($username) || !isset($password) || !isset($captcha)) {
             miss_params();
         }
 
         // 检查验证码
-        if(strtolower($captcha) != strtolower($this->session->captcha)){
+        if(strtolower($captcha) != strtolower($this->session->captcha)) {
             imgcode_error();
         }
 
         $user = $this->user_model->get_user($username,$password); //返回true(信息匹配成功)，false(信息匹配失败)
         // 检查用户名或密码
-        if(!$user){
+        if(!$user) {
             login_fail();
         }
 
