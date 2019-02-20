@@ -33,7 +33,7 @@ class User_model extends CI_Model
     //获取用户信息列表(超级账户功能)
     public function getUserList($page, $size) {
         $this->db->select('uid, username, nickname, email, locks, state, created, updated');
-        $this->db->where('state !=', '3');
+        $this->db->where('state !=', '0');
         $count = $this->db->count_all_results('users', FALSE);
         $this->db->limit($size, ($page-1)*$size);
         $userinfo = $this->db->get()->result_array();
@@ -44,10 +44,10 @@ class User_model extends CI_Model
                 $value["state"] = "正常";
             }else if($value["state"]==2)
             {
-                $value["state"] = "已冻结";
+                $value["state"] = "已封禁";
             }else
             {
-                $value["state"] = "";
+                $value["state"] = "系统错误！";
             }
             $value["created"] = date("Y-m-d H:i:s", $value["created"]);
             $value["updated"] = date("Y-m-d H:i:s", $value["updated"]);
@@ -62,7 +62,7 @@ class User_model extends CI_Model
         if(!isset($uid)) {
             return false;
         }else {
-            $this->db->set('state', 3);
+            $this->db->set('state', 0);
             $this->db->set('updated', time());
             $this->db->where('uid', $uid);
             $this->db->update('users');
@@ -186,7 +186,7 @@ class User_model extends CI_Model
         if($userinfo["state"]==1) {
                 $userinfo["state"] = "正常";
         }else if($userinfo["state"]==2) {
-            $userinfo["state"] = "已冻结";
+            $userinfo["state"] = "已封禁";
         }else {
             $userinfo["state"] = "系统错误！";
         }
@@ -219,31 +219,24 @@ class User_model extends CI_Model
         $userhash = get_hashpassword($userinfo["uid"],$userinfo["username"],$password,$userinfo["salt"],$userinfo["created"]); //用户输入的密码(哈希)
 
         if(!isset($userinfo) || $userhash != $userinfo["hash_password"]) {
-            $updateinfo = array(
-                'locks'   => $userinfo["locks"]+1,
-                'updated' => time()
-            );
-            $this->db->update('users',$updateinfo,'uid = '.$userinfo["uid"]);
-
+            $this->db->set('locks', $userinfo["locks"]+1);
+            $this->db->set('updated', time());
+            $this->db->where('uid', $userinfo["uid"]);
+            $this->db->update('users');
             return false;
         }
         else
         {
             $this->session->uid = $userinfo["uid"];
-            if(!isset($userinfo["nickname"]))
-            {
+            if(!isset($userinfo["nickname"])) {
                 $this->session->nickname = $userinfo["username"];
-            }
-            else
-            {
+            } else {
                 $this->session->nickname = $userinfo["nickname"];
             }
-            $updateinfo = array(
-                'locks'   => '0',
-                'state'   => '1',
-                'updated' => time()
-            );
-            $this->db->update('users',$updateinfo,'uid = '.$userinfo["uid"]);
+            $this->db->set('locks', 0);
+            $this->db->set('updated', time());
+            $this->db->where('uid', $userinfo["uid"]);
+            $this->db->update('users');
 
             return true;
         }
