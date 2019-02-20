@@ -74,9 +74,10 @@
     <!--文章内容-->
     <div class="col-md-8">
         <ol class="breadcrumb">
-            <li><a href="/"><{$grandparentinfo.c_name}></a></li>
-            <li><a href=""><{$parentinfo.c_name}></a></li>
-            <li><a href=""><{$postinfo.type}></a></li>
+            <{foreach $parentinfo as $catalog}>
+                <li><a href="<{$catalog.url}>"><{$catalog.c_name}></a></li>
+            <{/foreach}>
+            <li><a href="<{$postinfo.url}>"><{$postinfo.type}></a></li>
             <li class="active">正文</li>
         </ol>
         <div class="panel panel-default">

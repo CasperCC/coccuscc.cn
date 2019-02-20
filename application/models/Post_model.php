@@ -37,7 +37,7 @@ class Post_model extends CI_Model {
     // 查看文章(通用)
     public function getArticle($a_id) {
 
-        $this->db->select('articles.title, articles.author, articles.type_id, articles.type, articles.description, articles.content, articles.updated, catalogs.p_id');
+        $this->db->select('articles.title, articles.author, articles.type_id, articles.type, articles.description, articles.content, articles.updated, catalogs.p_id, catalogs.url');
         $this->db->from('articles');
         $this->db->join('catalogs', 'articles.type_id = catalogs.s_id');
         $this->db->where('a_id', $a_id);
@@ -45,19 +45,22 @@ class Post_model extends CI_Model {
 
 
         $this->db->from('catalogs');
-        $this->db->select('s_id, c_name, p_id');
+        $this->db->select('s_id, c_name, p_id, level, url');
         $this->db->where('s_id', $postinfo["p_id"]);
-        $parentinfo = $this->db->get()->row_array();
+        $info = $this->db->get()->row_array();
+        $parentinfo[$info["level"]] = $info;
 
-        $this->db->from('catalogs');
-        $this->db->select('s_id, c_name, p_id');
-        $this->db->where('s_id', $parentinfo["p_id"]);
-        $grandparentinfo = $this->db->get()->row_array();
+        for ($i=$parentinfo[$info["level"]]["level"]; $i > 1; $i--) {
+            $this->db->from('catalogs');
+            $this->db->select('s_id, c_name, p_id, level, url');
+            $this->db->where('s_id', $parentinfo[$i]["p_id"]);
+            $parentinfo[$i-1] = $this->db->get()->row_array();
+        }
+        $parentinfo = array_reverse($parentinfo);
 
         return array(
             'postinfo' => $postinfo,
-            'parentinfo' => $parentinfo,
-            'grandparentinfo' => $grandparentinfo
+            'parentinfo' => $parentinfo
         );
     }
 

@@ -42,12 +42,10 @@ class Post extends AdminBase_Controller {
         $info = $this->post_model->getArticle($a_id);
         $postinfo = $info["postinfo"];
         $parentinfo = $info["parentinfo"];
-        $grandparentinfo = $info["grandparentinfo"];
 
         $this->smarty->assign('postinfo', $postinfo);
         $this->smarty->assign('parentinfo', $parentinfo);
-        $this->smarty->assign('grandparentinfo', $grandparentinfo);
-        $this->smarty->display('main/pages/articleview.html');
+        $this->smarty->display('admin/post/articleview.html');
     }
 
     public function list() {
