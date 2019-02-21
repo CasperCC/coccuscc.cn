@@ -2,12 +2,15 @@
 
 <{block name = css}>
     <link href="https://cdn.bootcss.com/bootstrap-table/1.12.2/bootstrap-table.min.css" rel="stylesheet">
+    <style>
+        .data-table th, .data-table td { text-align: center; vertical-align: middle!important; }
+    </style>
 <{/block}>
 
 <{block name = title}>文章管理<{/block}>
 
 <{block name = body}>
-    <table id="list"></table>
+    <table id="list" class="data-table"></table>
 <{/block}>
 
 <{block name = script}>
@@ -125,7 +128,7 @@
             },
             'click #view-row': function(e, value, row, index) {  // 查看操作
                 var a_id = row.a_id;
-                $(location).attr('href', '/coc/post/view?a_id='+a_id);
+                $(location).attr('href', '/main/view?a_id='+a_id);
             }
         };
 

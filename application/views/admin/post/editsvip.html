@@ -1,0 +1,183 @@
+<{extends 'admin/templates/base.html'}>
+
+<{block name = title}>编辑用户：<!-- <{$userinfo.nickname}> --><{/block}>
+
+<{block name = body}>
+<div class="col-md-9">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            修改文章信息 <em><small>*不输入即为不修改项*</small></em>
+        </div>
+        <div class="panel-body">
+            <form class="form-horizontal">
+                <br>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">文章标题：</label>
+                    <p class="form-control-static"> <!-- <{$postinfo.title}> --></p>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">文章分类：</label>
+                    <div class="col-md-3">
+                        <select class="form-control">
+                            <option>1级目录1</option>
+                            <option>1级目录2</option>
+                            <option>1级目录3</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3" style="margin-left: -20px;">
+                        <select class="form-control">
+                            <option>2级目录1</option>
+                            <option>2级目录2</option>
+                            <option>2级目录3</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3" style="margin-left: -20px;">
+                        <select class="form-control">
+                            <option>3级目录1</option>
+                            <option>3级目录2</option>
+                            <option>3级目录3</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">文章作者：</label>
+                    <p class="form-control-static"> <!-- <{$postinfo.author}> --></p>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">文章状态：</label>
+                    <p class="form-control-static"> <!-- <{$postinfo.state}> --></p>
+                    <div class="col-md-offset-5 col-sm-offset-5" style="margin-top: -32px">
+                        <button class="btn btn-sm btn-default" type="button" id="frozen"> 封 禁 </button>
+                        <button class="btn btn-sm btn-default" type="button" id="unfrozen"> 解 封 </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">文章创建时间：</label>
+                    <p class="form-control-static"> <!-- <{$postinfo.created}> --></p>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">最后更改时间：</label>
+                    <p class="form-control-static"> <!-- <{$postinfo.updated}> --></p>
+                </div>
+                <div class="col-md-3 col-md-offset-8 col-sm-offset-8">
+                <button id="save" class="btn btn-danger" type="button">确认并保存修改</button>
+            </form>
+        </div>
+    </div>
+</div>
+<{/block}>
+
+<{block name = js}>
+<script>
+// $("#frozen").click(function() {
+//     layer.confirm('请确认是否封禁？', {
+//         btn: ['确认','取消']
+//     }, function() {
+//         var postId = "<{$postinfo.a_id}>";
+//         $.ajax({
+//             url: "/coc/post/frozen",
+//             dataType: "JSON",
+//             type: "POST",
+//             data: { "a_id" : postId },
+//             success: function(data){
+//                 var ret = data.ret;
+//                 if (ret == 0) {
+//                     window.location.reload();
+//                 } else {
+//                     layer.msg('操作失败！请重试');
+//                 }
+//             },
+//             error: function() {
+//                 layer.msg("请求失败！");
+//             }
+//         });
+//     }, function(){
+//         layer.msg("已取消");
+//     });
+// });
+
+// $("#unfrozen").click(function() {
+//     layer.confirm('请确认是否解封？', {
+//         btn: ['确认','取消']
+//     }, function() {
+//         var postId = "<{$postinfo.a_id}>";
+//         $.ajax({
+//             url: "/coc/post/unfrozen",
+//             dataType: "JSON",
+//             type: "POST",
+//             data: { "a_id" : postId },
+//             success: function(data){
+//                 var ret = data.ret;
+//                 if (ret == 0) {
+//                     window.location.reload();
+//                 } else {
+//                     layer.msg('操作失败！请重试');
+//                 }
+//             },
+//             error: function() {
+//                 layer.msg("请求失败！");
+//             }
+//         });
+//     }, function(){
+//         layer.msg("已取消");
+//     });
+// });
+
+// $("#save").click(function() {
+//     var userName = "<{$userinfo.username}>";
+//     var nickName = $("input[name='nickname']").val();
+//     var oldPassword = $("input[name='oldpassword']").val();
+//     var newPassword = $("input[name='newpassword']").val();
+//     var checkNewPassword = $("input[name='checknewpassword']").val();
+
+//     if ( oldPassword == "" && (newPassword != "" || checkNewPassword != "")) {
+//         layer.msg('请输入旧密码');
+//     } else if ( oldPassword != "" && ( newPassword == "" || checkNewPassword == "" )) {
+//         layer.msg("新密码不能为空！");
+//     } else if ( newPassword != checkNewPassword ) {
+//         layer.msg('两次密码不一致！请再次确认密码！');
+//     } else {
+//         layer.confirm('请确认是否保存修改？', {
+//         btn: ['确认','取消']
+//         }, function() {
+//             $.ajax({
+//                 url: "/coc/user/updateUserInfo",
+//                 type: "POST",
+//                 data: {
+//                     "username": userName,
+//                     "nickname": nickName,
+//                     "oldpassword": oldPassword,
+//                     "newpassword": newPassword
+//                 },
+//                 dataType: "json",
+//                 success: function(data){
+//                     var ret = data.ret;
+//                     if(ret == -3) {
+//                         layer.msg("旧密码错误！");
+//                     } else {
+//                         layer.msg('操作成功！正在跳转为上一页面', {
+//                             time: 2000
+//                         }, function() {
+//                             $(location).attr('href', '/coc/user/list');
+//                         });
+//                     }
+//                 },
+//                 error: function() {
+//                     layer.msg("请求失败！");
+//                 }
+//             });
+//         },function() {
+//             layer.msg('已取消');
+//         });
+//     }
+// });
+</script>
+
+<{/block}>
+
+
+
+
+
+
+

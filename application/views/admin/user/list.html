@@ -2,12 +2,15 @@
 
 <{block name = css}>
     <link href="https://cdn.bootcss.com/bootstrap-table/1.12.2/bootstrap-table.min.css" rel="stylesheet">
+    <style>
+        .data-table th, .data-table td { text-align: center; vertical-align: middle!important; }
+    </style>
 <{/block}>
 
 <{block name = title}>用户管理<{/block}>
 
 <{block name = body}>
-    <table id="list"></table>
+    <table id="list" class="data-table"></table>
 <{/block}>
 
 <{block name = script}>

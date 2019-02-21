@@ -30,22 +30,11 @@ class Post extends AdminBase_Controller {
     }
 
     public function edit() {
-        $a_id = $this->input->get('a_id');
-
-        $this->smarty->display('admin/post/edit.html');
-    }
-
-    public function view() {
         $this->load->model('post_model');
 
         $a_id = $this->input->get('a_id');
-        $info = $this->post_model->getArticle($a_id);
-        $postinfo = $info["postinfo"];
-        $parentinfo = $info["parentinfo"];
 
-        $this->smarty->assign('postinfo', $postinfo);
-        $this->smarty->assign('parentinfo', $parentinfo);
-        $this->smarty->display('admin/post/articleview.html');
+        $this->smarty->display('admin/post/editsvip.html');
     }
 
     public function list() {

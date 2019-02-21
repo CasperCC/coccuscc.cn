@@ -1,0 +1,31 @@
+<{extends 'main/templates/base.html'}>
+
+<{block name = title}><{$catalog}><{/block}>
+
+<{block name = body}>
+    <div class="col-md-8">
+        <ol class="breadcrumb">
+            <{foreach $type as $cata}>
+                <li><a href="<{$cata.url}>"><{$cata.c_name}></a></li>
+            <{/foreach}>
+            <li class="active"><{$catalog}></li>
+        </ol>
+    <{foreach $articles as $v}>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <h3 class="title"><a href="/main/view?a_id=<{$v.a_id}>"><{$v.title}></a></h3>
+                <hr><p><{$v.description}></p>
+                <br><br><br><br>
+                <ul class="list-inline">
+                    <li class="navbar-left">
+                        <p class="time">最后更新时间：<{$v.updated}></p>
+                    </li>
+                    <li class="navbar-right" style="margin-right: 40px;">
+                        <a class="btn btn-default" href="/main/view?a_id=<{$v.a_id}>" role="button"> 阅读 <span class="glyphicon glyphicon-hand-up" aria-hidden="true"></span></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    <{/foreach}>
+    </div>
+<{/block}>

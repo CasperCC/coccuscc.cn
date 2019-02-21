@@ -36,32 +36,33 @@ class Post_model extends CI_Model {
 
     // 查看文章(通用)
     public function getArticle($a_id) {
-
         $this->db->select('articles.title, articles.author, articles.type_id, articles.type, articles.description, articles.content, articles.updated, catalogs.p_id, catalogs.url');
         $this->db->from('articles');
         $this->db->join('catalogs', 'articles.type_id = catalogs.s_id');
         $this->db->where('a_id', $a_id);
         $postinfo = $this->db->get()->row_array();
+        return $postinfo;
+    }
 
-
-        $this->db->from('catalogs');
-        $this->db->select('s_id, c_name, p_id, level, url');
-        $this->db->where('s_id', $postinfo["p_id"]);
-        $info = $this->db->get()->row_array();
-        $parentinfo[$info["level"]] = $info;
-
-        for ($i=$parentinfo[$info["level"]]["level"]; $i > 1; $i--) {
-            $this->db->from('catalogs');
-            $this->db->select('s_id, c_name, p_id, level, url');
-            $this->db->where('s_id', $parentinfo[$i]["p_id"]);
-            $parentinfo[$i-1] = $this->db->get()->row_array();
+    public function getAllArticles() {
+        $this->db->from('articles');
+        $this->db->select('a_id, title, author, description, updated');
+        $postinfo = $this->db->get()->result_array();
+        foreach ($postinfo as &$v) {
+            $v["updated"] = date("Y-m-d H:i:s", $v["updated"]);
         }
-        $parentinfo = array_reverse($parentinfo);
+        return $postinfo;
+    }
 
-        return array(
-            'postinfo' => $postinfo,
-            'parentinfo' => $parentinfo
-        );
+    public function getCatalogs($type) {
+        $this->db->from('articles');
+        $this->db->select('a_id, title, author, description, updated');
+        $this->db->where('type', $type);
+        $articles = $this->db->get()->result_array();
+        foreach ($articles as &$v) {
+            $v["updated"] = date("Y-m-d H:i:s", $v["updated"]);
+        }
+        return $articles;
     }
 
     // 删除文章

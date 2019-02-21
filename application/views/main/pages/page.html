@@ -1,0 +1,39 @@
+<{extends 'main/templates/base.html'}>
+
+<{block name = title}>首页<{/block}>
+<{block name = body}>
+<div class="col-md-8">
+<{foreach $articles as $v}>
+        <div class="panel panel-default">
+        <div class="panel-body">
+            <h3 class="title"><a href="/main/view?a_id=<{$v.a_id}>"><{$v.title}></a></h3>
+            <hr><p><{$v.description}></p>
+            <br><br><br><br>
+            <ul class="list-inline">
+                <li class="navbar-left">
+                    <p class="time">最后更新时间：<{$v.updated}></p>
+                </li>
+                <li class="navbar-right" style="margin-right: 20px;">
+                    <a class="btn btn-default" href="/main/view?a_id=<{$v.a_id}>"" role="button"> 阅读 <span class="glyphicon glyphicon-hand-up" aria-hidden="true"></span></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+<{/foreach}>
+</div>
+<{/block}>
+
+<{block name = navigation}>
+<div class="col-md-offset-5">
+    <nav aria-label="Page navigation">
+        <ul class="pagination pagination-lg">
+            <li class="disabled"><span aria-hidden="true">&laquo;</span></li>
+            <li class="active"><span>1 <span class="sr-only"></span></span></li>
+            <li><a href="#">2</a></li>
+            <li><a href="#">3</a></li>
+            <li><a href="#">4</a></li>
+            <li><a href="#"><span aria-hidden="true">&raquo;</span></a></li>
+        </ul>
+    </nav>
+</div>
+<{/block}>

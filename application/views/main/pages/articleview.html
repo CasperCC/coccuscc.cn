@@ -1,0 +1,32 @@
+<{extends 'main/templates/base.html'}>
+
+<{block name = title}><{$postinfo.title}>-<{$postinfo.author}><{/block}>
+
+<{block name = style}>
+p.article {
+    font-size: 18px;
+    font-family: SimSun;
+    margin-left: 10px;
+    margin-right: 10px;
+    letter-spacing: 1px;
+}
+<{/block}>
+
+<{block name = body}>
+<div class="col-md-8">
+    <ol class="breadcrumb" style="font-size: large;">
+        <{foreach $parentinfo as $catalog}>
+            <li><a href="<{$catalog.url}>"><{$catalog.c_name}></a></li>
+        <{/foreach}>
+        <li><a href="<{$postinfo.url}>"><{$postinfo.type}></a></li>
+        <li class="active">正文</li>
+    </ol>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <h2 class="text-center"><{$postinfo.title}></h2>
+            <h3 class="text-right" style="margin-right: 80px;">——<{$postinfo.author}></h3><br>
+            <p class="article"><{$postinfo.content}></p>
+        </div>
+    </div>
+</div>
+<{/block}>
