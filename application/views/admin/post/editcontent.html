@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/metisMenu/2.7.0/metisMenu.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/layer/2.3/skin/layer.css" rel="stylesheet">
+    <style>
+        textarea {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <h3 class="text-center"><{$postinfo.title}></h3>
+    <div class="col-md-10 col-md-offset-1">
+        <textarea rows="20" id="content">
+            <{$postinfo.content}>
+        </textarea>
+    </div>
+    <div class="col-md-offset-10 col-sm-offset-10">
+        <button id="save" class="btn btn-danger" type="button">确认并保存修改</button>
+    </div>
+
+<script src="/static/libs/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdn.bootcss.com/metisMenu/2.7.0/metisMenu.min.js"></script>
+<script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
+</body>
+
+</html>
+
+<script>
+$("#save").click(function() {
+    var postId = "<{$postinfo.a_id}>";
+    var content = $("#content").val();
+    var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+    parent.layer.iframeAuto(index);
+
+    if ( content == "") {
+        layer.msg('请输入文章内容！');
+    } else {
+        layer.confirm('请确认是否保存修改？', {
+        btn: ['确认','取消']
+        }, function() {
+            $.ajax({
+                url: "/coc/post/changePostContent",
+                type: "POST",
+                data: {
+                    "a_id": postId,
+                    "content": content
+                },
+                dataType: "json",
+                success: function(data){
+                    var ret = data.ret;
+                    if(ret == 0) {
+                        layer.msg('操作成功！', {
+                            time: 2000
+                        }, function() {
+                            parent.layer.close(index);
+                        });
+                    } else {
+                        layer.msg('操作失败！请重试');
+                    }
+                },
+                error: function() {
+                    layer.msg("请求失败！");
+                }
+            });
+        },function() {
+            layer.msg('已取消');
+        });
+    }
+});
+</script>

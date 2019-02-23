@@ -36,17 +36,39 @@ class Post_model extends CI_Model {
 
     // 查看文章(通用)
     public function getArticle($a_id) {
-        $this->db->select('articles.title, articles.author, articles.type_id, articles.type, articles.description, articles.content, articles.updated, catalogs.p_id, catalogs.url');
+        $this->db->select('articles.title, articles.author, articles.type_id, articles.type, articles.description, articles.content, articles.status, articles.updated, catalogs.p_id, catalogs.url');
         $this->db->from('articles');
         $this->db->join('catalogs', 'articles.type_id = catalogs.s_id');
         $this->db->where('a_id', $a_id);
+        $this->db->where('status !=', 0);
         $postinfo = $this->db->get()->row_array();
         return $postinfo;
     }
 
+    // 获取文章信息(通用)
+    public function getPostInfo($a_id) {
+        $this->db->select('a_id, title, author, type, description, content, status, created, updated');
+        $this->db->from('articles');
+        $this->db->where('a_id', $a_id);
+        $this->db->where('status !=', 0);
+        $postinfo = $this->db->get()->row_array();
+        if($postinfo["status"]==1) {
+            $postinfo["status"] = "正常";
+        } else if($postinfo["status"]==2) {
+            $postinfo["status"] = "已封禁";
+        } else {
+            $postinfo["status"] = "系统错误！";
+        }
+        $postinfo["created"] = date("Y-m-d H:i:s", $postinfo["created"]);
+        $postinfo["updated"] = date("Y-m-d H:i:s", $postinfo["updated"]);
+        return $postinfo;
+    }
+
+    // 获取所有文章信息(普通用户功能)
     public function getAllArticles() {
         $this->db->from('articles');
         $this->db->select('a_id, title, author, description, updated');
+        $this->db->where('status', 1);
         $postinfo = $this->db->get()->result_array();
         foreach ($postinfo as &$v) {
             $v["updated"] = date("Y-m-d H:i:s", $v["updated"]);
@@ -54,6 +76,43 @@ class Post_model extends CI_Model {
         return $postinfo;
     }
 
+    // 封禁文章(超级用户功能)
+    public function frozenArticle($a_id) {
+        $this->db->set('status', 2);
+        $this->db->set('updated', time());
+        $this->db->where('a_id', $a_id);
+        $this->db->update('articles');
+        return true;
+    }
+
+    // 解封文章(超级用户功能)
+    public function unfrozenArticle($a_id) {
+        $this->db->set('status', 1);
+        $this->db->set('updated', time());
+        $this->db->where('a_id', $a_id);
+        $this->db->update('articles');
+        return true;
+    }
+
+    // 更改文章信息(通用)
+    public function changePostInfo($a_id, $title, $first, $second, $third) {
+        $this->db->set('title', $title);
+        $this->db->set('updated', time());
+        $this->db->where('a_id', $a_id);
+        $this->db->update('articles');
+        return true;
+    }
+
+    // 更改文章内容
+    public function changePostContent($a_id, $content) {
+        $this->db->set('content', $content);
+        $this->db->set('updated', time());
+        $this->db->where('a_id', $a_id);
+        $this->db->update('articles');
+        return true;
+    }
+
+    // 获取当前目录(通用)
     public function getCatalogs($type) {
         $this->db->from('articles');
         $this->db->select('a_id, title, author, description, updated');

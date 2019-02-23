@@ -6,9 +6,9 @@
     <div class="col-md-8">
         <ol class="breadcrumb">
             <{foreach $type as $cata}>
-                <li><a href="<{$cata.url}>"><{$cata.c_name}></a></li>
+                <li style="font-size: large;"><a href="<{$cata.url}>"><{$cata.c_name}></a></li>
             <{/foreach}>
-            <li class="active"><{$catalog}></li>
+            <li class="active" style="font-size: large;"><{$catalog}></li>
         </ol>
     <{foreach $articles as $v}>
         <div class="panel panel-default">

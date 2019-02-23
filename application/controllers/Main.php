@@ -20,9 +20,16 @@ class Main extends Base_Controller {
 
     public function view() {
         $this->load->model('post_model');
+        $this->load->library('session');
 
         $a_id = $this->input->get('a_id');
         $info = $this->post_model->getArticle($a_id);
+
+        // 检查用户查看文章权限
+        $uid = $this->session->uid;
+        if ($info["status"] == "2" && $uid != "1") {
+            lack_permission();
+        }
         $parentinfo = $this->checkCatalog($info["p_id"]);
 
         $this->smarty->assign('postinfo', $info);

@@ -26,6 +26,11 @@ function list_return($count, $data) //返回用户列表数据
     exit();
 }
 
+function lack_permission() {
+    echo "您没有权限！详情请咨询管理员。";
+    exit();
+}
+
 // 成功返回结果
 function success_return($data="") {
     $ret = 0;
