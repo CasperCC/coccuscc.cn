@@ -12,8 +12,14 @@ class Post extends AdminBase_Controller {
 
         $page = $this->input->get('page');
         $size = $this->input->get('size');
+        $svip = $this->administrator;
+        $uid = $this->uid;
 
-        $posts = $this->post_model->getArticlesList($page, $size);
+        if ($svip == 0) {
+            $posts = $this->post_model->getUserArticlesList($page, $size, $uid);
+        } else {
+            $posts = $this->post_model->getArticlesList($page, $size);
+        }
         list_return($posts["count"], $posts["postinfo"]);
     }
 
@@ -98,9 +104,15 @@ class Post extends AdminBase_Controller {
 
         $a_id = $this->input->get('a_id');
         $postinfo = $this->post_model->getPostInfo($a_id);
+        $svip = $this->administrator;
+        $uid = $this->uid;
 
-        $this->smarty->assign('postinfo', $postinfo);
-        $this->smarty->display('admin/post/editsvip.html');
+        if ($postinfo["uid"] == $uid || $svip == 1) {
+            $this->smarty->assign('postinfo', $postinfo);
+            $this->smarty->display('admin/post/editsvip.html');
+        } else {
+            $this->smarty->display('admin/nosvip.html');
+        }
     }
 
     public function list() {

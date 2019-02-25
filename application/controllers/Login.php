@@ -20,6 +20,7 @@ class Login extends CI_Controller {
 
         $this->session->unset_userdata('uid');
         $this->session->unset_userdata('nickname');
+        $this->session->unset_userdata('administrator');
         redirect('/login');
     }
     // 注册页面

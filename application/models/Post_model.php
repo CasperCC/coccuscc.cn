@@ -6,6 +6,35 @@ class Post_model extends CI_Model {
         parent::__construct();
     }
 
+    // 获取用户个人文章(普通用户功能)
+    public function getUserArticlesList($page, $size, $uid) {
+        $this->db->select('a_id, title, uid, author, type, status, created, updated');
+        $this->db->where('uid', $uid);
+        $this->db->where('status !=', 0);
+        $count = $this->db->count_all_results('articles', FALSE);
+        $this->db->limit($size, ($page-1)*$size);
+        $postinfo = $this->db->get()->result_array();
+        foreach ($postinfo as &$value)
+        {
+            if($value["status"]==1)
+            {
+                $value["status"] = "正常";
+            }else if($value["status"]==2)
+            {
+                $value["status"] = "已封禁";
+            }else
+            {
+                $value["status"] = "系统错误！";
+            }
+            $value["created"] = date("Y-m-d H:i:s", $value["created"]);
+            $value["updated"] = date("Y-m-d H:i:s", $value["updated"]);
+        }
+        return array(
+            'count' => $count,
+            'postinfo' => $postinfo
+        );
+    }
+
     // 获取文章列表(超级用户功能)
     public function getArticlesList($page, $size) {
         $this->db->select('a_id, title, uid, author, type, status, created, updated');
@@ -47,7 +76,7 @@ class Post_model extends CI_Model {
 
     // 获取文章信息(通用)
     public function getPostInfo($a_id) {
-        $this->db->select('a_id, title, author, type, description, content, status, created, updated');
+        $this->db->select('a_id, title, uid, author, type, description, content, status, created, updated');
         $this->db->from('articles');
         $this->db->where('a_id', $a_id);
         $this->db->where('status !=', 0);
@@ -113,15 +142,34 @@ class Post_model extends CI_Model {
     }
 
     // 获取当前目录(通用)
-    public function getCatalogs($type) {
-        $this->db->from('articles');
-        $this->db->select('a_id, title, author, description, updated');
-        $this->db->where('type', $type);
-        $articles = $this->db->get()->result_array();
-        foreach ($articles as &$v) {
-            $v["updated"] = date("Y-m-d H:i:s", $v["updated"]);
-        }
-        return $articles;
+    // public function getCatalogs($type) {
+    //     $this->db->from('articles');
+    //     $this->db->select('a_id, title, author, description, updated');
+    //     $this->db->where('type', $type);
+    //     $articles = $this->db->get()->result_array();
+    //     foreach ($articles as &$v) {
+    //         $v["updated"] = date("Y-m-d H:i:s", $v["updated"]);
+    //     }
+    //     return $articles;
+    // }
+    public function getCatalogs() {
+        $this->db->from('catalogs');
+        $this->db->where('level', 1);
+        $firstcatalogs = $this->db->get()->result_array(); //获取一级目录
+
+        $this->db->from('catalogs');
+        $this->db->where('level', 2);
+        $secondcatalogs = $this->db->get()->result_array(); //获取二级目录
+
+        $this->db->from('catalogs');
+        $this->db->where('level', 3);
+        $thirdcatalogs = $this->db->get()->result_array(); //获取三级目录
+
+        return array(
+            'firstcatalogs' => $firstcatalogs,
+            'secondcatalogs' => $secondcatalogs,
+            'thirdcatalogs' => $thirdcatalogs
+            );
     }
 
     // 删除文章

@@ -16,6 +16,7 @@ class AdminBase_Controller extends CI_Controller {
 
         $uid = $this->session->uid;
         $nickname = $this->session->nickname;
+        $administrator = $this->session->administrator;
 
         if(!isset($uid) || !isset($nickname)){
             redirect('/login?redirect=/'.uri_string());
@@ -23,13 +24,14 @@ class AdminBase_Controller extends CI_Controller {
 
         $this->uid = $uid;
         $this->nickname = $nickname;
+        $this->administrator = $administrator;
 
         $this->smarty->assign('nickname', $nickname);
     }
 
     public function checkSvip() {
-    $svip = $this->uid;
-    if ($svip != 1) {
+    $svip = $this->administrator;
+    if ($svip == 0) {
         $this->smarty->display('admin/nosvip.html');
         exit();
     }

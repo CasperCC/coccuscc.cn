@@ -1,6 +1,13 @@
 <footer class="bs-docs-footer">
     <hr>
     <div class="alert alert-default" role="alert">
-        <p class="text-center"><{$config.3.content}> <{$config.4.content}></p>
+        <p class="text-center"><{$config.3.content}>
+            <script>
+                var currentYear = new Date().getFullYear();
+                if ( currentYear > 2018 ) {
+                    document.write('- '+currentYear);
+                }
+            </script> <{$config.4.content}>
+        </p>
   </div>
 </footer>

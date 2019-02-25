@@ -1,7 +1,100 @@
 <{extends 'admin/templates/base.html'}>
 
+<{block name = css}>
+    <link href="https://cdn.bootcss.com/bootstrap-table/1.12.2/bootstrap-table.min.css" rel="stylesheet">
+    <style>
+        .data-table th { text-align: center; vertical-align: middle!important; }
+        .data-table td { vertical-align: middle!important; }
+    </style>
+<{/block}>
+
 <{block name = title}>系统配置<{/block}>
 
 <{block name = body}>
-暂无功能
+<table id="list" class="data-table"></table>
+<{/block}>
+
+<{block name = script}>
+    <script src="https://cdn.bootcss.com/bootstrap-table/1.12.1/bootstrap-table.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap-table/1.12.1/locale/bootstrap-table-zh-CN.min.js"></script>
+<{/block}>
+
+<{block name = js}>
+<script>
+    var tempTableParams;
+    $('#list').bootstrapTable({
+        queryParamsType: 'undefine',
+        queryParams: function queryParams(params) {
+            var param = {
+                page: params.pageNumber,
+                size: params.pageSize
+            };
+            tempTableParams = params;
+            return param;
+        },
+        ajax: function(request) {
+            $.ajax({
+                url: "/coc/setting/configListInterface",
+                type: "GET",
+                data: {
+                    "page": tempTableParams.pageNumber,
+                    "size": tempTableParams.pageSize
+                },
+                dataType: "json",
+                success: function(data) {
+                    request.success({
+                        total: data.count,
+                        rows: data.data,
+                    });
+                }
+            });
+        },
+        cache: false,
+        pageSize: 5,
+        showRefresh: true,
+        striped: true,
+        pagination: true,
+        paginationLoop: false,
+        pageList: [2, 4, 'All'],
+        sidePagination: 'server',
+        columns: [
+        {
+            field: 'id',
+            title: '设置ID',
+            width: '8%'
+        }, {
+            field: 'config',
+            title: '设置名称'
+        }, {
+            field: 'description',
+            title: '设置项'
+        }, {
+            field: 'content',
+            title: '设置内容'
+        }, {
+            field: 'updated',
+            title: '最后更新时间',
+            width: '16%'
+        }, {
+            field: 'Button',
+            title: '操作',
+            width: '6%',
+            events: 'operateEvents',
+            formatter: operateFormatter
+        }]
+    });
+
+    window.operateEvents = {
+        'click #edit-row': function(e, value, row, index) {  // 修改记录操作
+            var id = row.id;
+            $(location).attr('href', '/coc/setting/edit?id='+id);
+        }
+    };
+
+    function operateFormatter(value, row, index) {
+        return [
+            '<button id="edit-row" type="button" class="btn btn-warning btn-xs">编辑</button>',
+        ].join('');
+    }
+</script>
 <{/block}>

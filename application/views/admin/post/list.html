@@ -20,124 +20,124 @@
 
 <{block name = js}>
 <script>
-        var tempTableParams;
-        $('#list').bootstrapTable({
-            queryParamsType: 'undefined',
-            queryParams: function queryParams(params) {
-                var param = {
-                    page: params.pageNumber,
-                    size: params.pageSize
-                };
-                tempTableParams = params;
-                return param;
-            },
-            ajax: function(request) {
+    var tempTableParams;
+    $('#list').bootstrapTable({
+        queryParamsType: 'undefined',
+        queryParams: function queryParams(params) {
+            var param = {
+                page: params.pageNumber,
+                size: params.pageSize
+            };
+            tempTableParams = params;
+            return param;
+        },
+        ajax: function(request) {
+            $.ajax({
+                url: "/coc/post/getPostList",
+                type: "GET",
+                data: {
+                    "page": tempTableParams.pageNumber,
+                    "size": tempTableParams.pageSize
+                },
+                dataType: "json",
+                success: function(data) {
+                    request.success({
+                        total: data.count,
+                        rows: data.data,
+                    });
+                }
+            });
+        },
+        cache: false,
+        pageSize: 5,
+        showRefresh: true,
+        striped: true,
+        pagination: true,
+        paginationLoop: false,
+        pageList: [5, 10, 15, 20, 'All'],
+        sidePagination: 'server',
+        columns: [
+        {
+            field: 'a_id',
+            title: '文章ID',
+            width: '8%'
+        }, {
+            field: 'title',
+            title: '文章标题'
+        }, {
+            field: 'uid',
+            title: '作者ID',
+            width: '8%'
+        }, {
+            field: 'author',
+            title: '作者'
+        }, {
+            field: 'type',
+            title: '文章类别',
+        }, {
+            field: 'status',
+            title: '文章状态',
+            width: '6%'
+        }, {
+            field: 'created',
+            title: '文章创建时间',
+            width: '10%'
+        }, {
+            field: 'updated',
+            title: '文章最后更新时间',
+            width: '10%'
+        }, {
+            field: 'Button',
+            title: '操作',
+            width: '14%',
+            events: 'operateEvents',
+            formatter: operateFormatter
+        }]
+    });
+
+    window.operateEvents = {
+        'click #delete-row': function(e, value, row, index) {  // 删除记录操作
+            layer.confirm('请确认是否删除这篇文章？', {
+                btn: ['确认','取消']
+            }, function() {
+                var a_id = row.a_id;
                 $.ajax({
-                    url: "/coc/post/getPostList",
-                    type: "GET",
+                    url: "/coc/post/deletePost",
+                    dataType: "JSON",
+                    type: "POST",
                     data: {
-                        "page": tempTableParams.pageNumber,
-                        "size": tempTableParams.pageSize
-                    },
-                    dataType: "json",
-                    success: function(data) {
-                        request.success({
-                            total: data.count,
-                            rows: data.data,
-                        });
+                        "a_id": a_id
+                    }, success: function(data) {
+                        if ( data.ret == 0 ) {
+                            layer.msg('已成功删除！');
+                        } else {
+                            layer.msg('删除失败！请检查数据是否存在！');
+                        }
+                        $('#list').bootstrapTable('refresh');
+                    }, error: function() {
+                        layer.msg("连接服务器过程中出现故障！请重试！");
                     }
                 });
-            },
-            cache: false,
-            pageSize: 5,
-            showRefresh: true,
-            striped: true,
-            pagination: true,
-            paginationLoop: false,
-            pageList: [5, 10, 15, 20, 'All'],
-            sidePagination: 'server',
-            columns: [
-            {
-                field: 'a_id',
-                title: '文章ID',
-                width: '8%'
-            }, {
-                field: 'title',
-                title: '文章标题'
-            }, {
-                field: 'uid',
-                title: '作者ID',
-                width: '8%'
-            }, {
-                field: 'author',
-                title: '作者'
-            }, {
-                field: 'type',
-                title: '文章类别',
-            }, {
-                field: 'status',
-                title: '文章状态',
-                width: '6%'
-            }, {
-                field: 'created',
-                title: '文章创建时间',
-                width: '10%'
-            }, {
-                field: 'updated',
-                title: '文章最后更新时间',
-                width: '10%'
-            }, {
-                field: 'Button',
-                title: '操作',
-                width: '14%',
-                events: 'operateEvents',
-                formatter: operateFormatter
-            }]
-        });
-
-        window.operateEvents = {
-            'click #delete-row': function(e, value, row, index) {  // 删除记录操作
-                layer.confirm('请确认是否删除这篇文章？', {
-                    btn: ['确认','取消']
-                }, function() {
-                    var a_id = row.a_id;
-                    $.ajax({
-                        url: "/coc/post/deletePost",
-                        dataType: "JSON",
-                        type: "POST",
-                        data: {
-                            "a_id": a_id
-                        }, success: function(data) {
-                            if ( data.ret == 0 ) {
-                                layer.msg('已成功删除！');
-                            } else {
-                                layer.msg('删除失败！请检查数据是否存在！');
-                            }
-                            $('#list').bootstrapTable('refresh');
-                        }, error: function() {
-                            layer.msg("连接服务器过程中出现故障！请重试！");
-                        }
-                    });
-                }, function() {
-                    layer.msg('已取消该删除操作！');
-                });
-            },
-            'click #edit-row': function(e, value, row, index) {  // 修改记录操作
-                var a_id = row.a_id;
-                $(location).attr('href', '/coc/post/edit?a_id='+a_id);
-            },
-            'click #view-row': function(e, value, row, index) {  // 查看操作
-                var a_id = row.a_id;
-                $(location).attr('href', '/main/view?a_id='+a_id);
-            }
-        };
-
-        function operateFormatter(value, row, index) {
-            return [
-                '<button id="view-row" type="button" class="btn btn-info btn-xs">查看</button> ',
-                '<button id="edit-row" type="button" class="btn btn-warning btn-xs">编辑</button> ',
-                '<button id="delete-row" type="button" class="btn btn-danger btn-xs">删除</button>'
-            ].join('');
+            }, function() {
+                layer.msg('已取消该删除操作！');
+            });
+        },
+        'click #edit-row': function(e, value, row, index) {  // 修改记录操作
+            var a_id = row.a_id;
+            $(location).attr('href', '/coc/post/edit?a_id='+a_id);
+        },
+        'click #view-row': function(e, value, row, index) {  // 查看操作
+            var a_id = row.a_id;
+            $(location).attr('href', '/main/view?a_id='+a_id);
         }
+    };
+
+    function operateFormatter(value, row, index) {
+        return [
+            '<button id="view-row" type="button" class="btn btn-info btn-xs">查看</button> ',
+            '<button id="edit-row" type="button" class="btn btn-warning btn-xs">编辑</button> ',
+            '<button id="delete-row" type="button" class="btn btn-danger btn-xs">删除</button>'
+        ].join('');
+    }
 </script>
 <{/block}>

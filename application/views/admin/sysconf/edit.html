@@ -1,0 +1,89 @@
+<{extends 'admin/templates/base.html'}>
+
+<{block name = title}>更改系统设置：<{$config.description}><{/block}>
+
+<{block name = css}>
+<style>
+    textarea {
+        width: 60%;
+    }
+</style>
+<{/block}>
+
+<{block name = body}>
+<div class="col-md-9">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            修改系统设置
+        </div>
+        <div class="panel-body">
+            <form class="form-horizontal">
+                <br>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">系统设置名称：</label>
+                    <p class="form-control-static"> <{$config.config}></p>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">系统设置说明：</label>
+                    <p class="form-control-static"> <{$config.description}></p>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">系统设置内容：</label>
+                    <textarea rows="5" id="content"><{$config.content}></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">最后更改时间：</label>
+                    <p class="form-control-static"> <{$config.updated}></p>
+                </div>
+                <div class="col-md-3 col-md-offset-8 col-sm-offset-8">
+                    <button id="save" class="btn btn-danger" type="button">确认并保存修改</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<{/block}>
+
+<{block name = js}>
+<script>
+    $("#save").click(function() {
+        var content = $("#content").val();
+        var Id = "<{$config.id}>";
+
+        if ( content == "" ) {
+            layer.msg('必填项不能为空！');
+        } else {
+            layer.confirm('请确认是否保存修改？', {
+            btn: ['确认','取消']
+            }, function() {
+                $.ajax({
+                    url: "/coc/setting/updateConfigInfo",
+                    type: "POST",
+                    data: {
+                        "id": Id,
+                        "content": content
+                    },
+                    dataType: "json",
+                    success: function(data){
+                        var ret = data.ret;
+                        if(ret == 0) {
+                            layer.msg('操作成功！正在跳转为上一页面', {
+                                time: 2000
+                            }, function() {
+                                $(location).attr('href', '/coc/setting');
+                            });
+                        } else {
+                            layer.msg('操作失败！请重试');
+                        }
+                    },
+                    error: function() {
+                        layer.msg("请求失败！");
+                    }
+                });
+            }, function() {
+                layer.msg('已取消');
+            });
+        }
+    });
+</script>
+<{/block}>

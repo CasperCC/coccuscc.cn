@@ -201,7 +201,7 @@ class User_model extends CI_Model
         $this->load->library('session');
 
         $this->db->from('users');
-        $this->db->select('uid, username, nickname, salt, hash_password, locks, created');
+        $this->db->select('uid, username, nickname, salt, hash_password, locks, administrator, created');
         $this->db->group_start();
             $this->db->where('username', $username);
             $this->db->or_where('email', $username);
@@ -228,6 +228,7 @@ class User_model extends CI_Model
         else
         {
             $this->session->uid = $userinfo["uid"];
+            $this->session->administrator = $userinfo["administrator"];
             if(!isset($userinfo["nickname"])) {
                 $this->session->nickname = $userinfo["username"];
             } else {
