@@ -26,15 +26,25 @@ class Main extends Base_Controller {
         $info = $this->post_model->getArticle($a_id);
 
         // 检查用户查看文章权限
-        $uid = $this->session->uid;
-        if ($info["status"] == "2" && $uid != "1") {
+        $vip = $this->session->administrator;
+        if ($info["status"] == "2" && $vip != "1") {
             lack_permission();
         }
-        $parentinfo = $this->checkCatalog($info["p_id"]);
 
         $this->smarty->assign('postinfo', $info);
-        $this->smarty->assign('parentinfo', $parentinfo);
         $this->smarty->display('main/pages/articleview.html');
+    }
+
+    public function category() {
+        $this->load->model('category_model');
+
+        $type_id = $this->input->get('s_id');
+        $catalog = $this->input->get('catalog');
+        $info = $this->category_model->getCategoryArticles($type_id);
+
+        $this->smarty->assign('articles', $info);
+        $this->smarty->assign('catalog', $catalog);
+        $this->smarty->display('main/pages/catalogs/catalogview.html');
     }
 
 }

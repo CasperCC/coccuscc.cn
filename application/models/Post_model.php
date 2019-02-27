@@ -65,18 +65,19 @@ class Post_model extends CI_Model {
 
     // 查看文章(通用)
     public function getArticle($a_id) {
-        $this->db->select('articles.title, articles.author, articles.type_id, articles.type, articles.description, articles.content, articles.status, articles.updated, catalogs.p_id, catalogs.url');
+        $this->db->select('articles.title, articles.author, articles.type_id, articles.type, articles.description, articles.content, articles.status, articles.updated, catalogs.p_id');
         $this->db->from('articles');
         $this->db->join('catalogs', 'articles.type_id = catalogs.s_id');
         $this->db->where('a_id', $a_id);
-        $this->db->where('status !=', 0);
+        $this->db->where('articles.status !=', 0);
+        $this->db->where('catalogs.status !=', 0);
         $postinfo = $this->db->get()->row_array();
         return $postinfo;
     }
 
     // 获取文章信息(通用)
     public function getPostInfo($a_id) {
-        $this->db->select('a_id, title, uid, author, type, description, content, status, created, updated');
+        $this->db->select('a_id, title, uid, author, type_id, type, description, content, status, created, updated');
         $this->db->from('articles');
         $this->db->where('a_id', $a_id);
         $this->db->where('status !=', 0);
@@ -91,6 +92,23 @@ class Post_model extends CI_Model {
         $postinfo["created"] = date("Y-m-d H:i:s", $postinfo["created"]);
         $postinfo["updated"] = date("Y-m-d H:i:s", $postinfo["updated"]);
         return $postinfo;
+    }
+
+    // 获取文章目录
+    public function getArticleCatalog($a_id) {
+        $this->db->select('articles.type_id, articles.type, catalogs.p_id');
+        $this->db->from('articles');
+        $this->db->join('catalogs', 'articles.type_id = catalogs.s_id');
+        $this->db->where('a_id', $a_id);
+        $this->db->where('articles.status !=', 0);
+        $this->db->where('catalogs.status !=', 0);
+        $cataloginfo = $this->db->get()->row_array();
+        $this->db->from('catalogs');
+        $this->db->select('c_name');
+        $this->db->where('s_id', $cataloginfo["p_id"]);
+        $this->db->where('status', 1);
+        $c_name = $this->db->get()->row_array();
+        return array('cataloginfo' => $cataloginfo, 'parentinfo' => $c_name);
     }
 
     // 获取所有文章信息(普通用户功能)
@@ -124,8 +142,10 @@ class Post_model extends CI_Model {
     }
 
     // 更改文章信息(通用)
-    public function changePostInfo($a_id, $title, $first, $second, $third) {
+    public function changePostInfo($a_id, $title, $third, $thirdname) {
         $this->db->set('title', $title);
+        $this->db->set('type_id', $third);
+        $this->db->set('type', $thirdname);
         $this->db->set('updated', time());
         $this->db->where('a_id', $a_id);
         $this->db->update('articles');
@@ -152,25 +172,25 @@ class Post_model extends CI_Model {
     //     }
     //     return $articles;
     // }
-    public function getCatalogs() {
-        $this->db->from('catalogs');
-        $this->db->where('level', 1);
-        $firstcatalogs = $this->db->get()->result_array(); //获取一级目录
+    // public function getCatalogs() {
+    //     $this->db->from('catalogs');
+    //     $this->db->where('level', 1);
+    //     $firstcatalogs = $this->db->get()->result_array(); //获取一级目录
 
-        $this->db->from('catalogs');
-        $this->db->where('level', 2);
-        $secondcatalogs = $this->db->get()->result_array(); //获取二级目录
+    //     $this->db->from('catalogs');
+    //     $this->db->where('level', 2);
+    //     $secondcatalogs = $this->db->get()->result_array(); //获取二级目录
 
-        $this->db->from('catalogs');
-        $this->db->where('level', 3);
-        $thirdcatalogs = $this->db->get()->result_array(); //获取三级目录
+    //     $this->db->from('catalogs');
+    //     $this->db->where('level', 3);
+    //     $thirdcatalogs = $this->db->get()->result_array(); //获取三级目录
 
-        return array(
-            'firstcatalogs' => $firstcatalogs,
-            'secondcatalogs' => $secondcatalogs,
-            'thirdcatalogs' => $thirdcatalogs
-            );
-    }
+    //     return array(
+    //         'firstcatalogs' => $firstcatalogs,
+    //         'secondcatalogs' => $secondcatalogs,
+    //         'thirdcatalogs' => $thirdcatalogs
+    //         );
+    // }
 
     // 删除文章
     public function deleteArticle($a_id) {

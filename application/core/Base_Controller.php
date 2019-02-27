@@ -6,13 +6,14 @@ class Base_Controller extends CI_Controller {
     function __construct() {
         parent::__construct();
 
-        $this->_catalog();
+        // $this->_catalog();
         $this->_config();
+        $this->_checkCatalog();
     }
 
     private function _catalog() {
         $this->db->from('catalogs');
-        $this->db->select('c_name, url');
+        $this->db->select('c_name');
         $this->db->where('level', 2);
         $cataloginfo = $this->db->get()->result_array();
 
@@ -44,23 +45,22 @@ class Base_Controller extends CI_Controller {
     //     $parentinfo = array_reverse($parentinfo);
     //     return $parentinfo;
     // }
-    public function checkCatalog() {
-        $this->load->model('post_model');
+    private function _checkCatalog() {
+        $this->load->model('category_model');
 
-        $catalogs = $this->post_model->getCatalogs();
-        $firstcatalogs = $catalogs["firstcatalogs"];
-        $secondcatalogs = $catalogs["secondcatalogs"];
-        $thirdcatalogs = $catalogs["thirdcatalogs"];
+        $catalogs = $this->category_model->getAllCategory();
+        $catalogList = array();
 
-        $path = array(
-            '0' => $firstcatalogs
-        );
-
-        foreach ($path as &$second) {
-            if ($secondcatalogs["s_id"] == $firstcatalogs[""]["p_id"]) {
-                $second["child"] = $secondcatalogs;
+        foreach ($catalogs as $key => $value) {
+            if ($value["level"] == 1) {
+                $catalogList[$value["s_id"]] = $catalogs[$key];
+            } else if ($value["level"] == 2) {
+                $catalogList[$value["p_id"]]["child"][$value["s_id"]] = $catalogs[$key];
+            } else {
+                $catalogList[1]["child"][$value["p_id"]]["child"][$value["s_id"]] = $catalogs[$key];
             }
-
         }
+
+        $this->smarty->assign('catalogList', $catalogList);
     }
 }

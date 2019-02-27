@@ -8,20 +8,11 @@
     <link href="https://cdn.bootcss.com/metisMenu/2.7.0/metisMenu.min.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/layer/2.3/skin/layer.css" rel="stylesheet">
-    <style>
-        textarea {
-            width: 100%;
-            height: 100%;
-        }
-    </style>
 </head>
 
 <body>
-    <h3 class="text-center"><{$postinfo.title}></h3>
-    <div class="col-md-10 col-md-offset-1">
-        <textarea rows="20" id="content">
-            <{$postinfo.content}>
-        </textarea>
+    <div class="col-md-10 col-md-offset-2">
+        <script id="container" name="content" type="text/plain"><{$postinfo.content}></script>
     </div>
     <div class="col-md-offset-10 col-sm-offset-10">
         <button id="save" class="btn btn-danger" type="button">确认并保存修改</button>
@@ -31,16 +22,30 @@
 <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="https://cdn.bootcss.com/metisMenu/2.7.0/metisMenu.min.js"></script>
 <script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
+<script src="/static/libs/ueditor/ueditor.config.js"></script>
+<script src="/static/libs/ueditor/ueditor.all.js"></script>
 </body>
 
 </html>
 
 <script>
+var ue = UE.getEditor('container', {
+    toolbars: [
+        ['fullscreen', 'source', '|', 'undo', 'redo', '|', 'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'horizontal', '|', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc'],
+        ['insertcode', 'fontfamily', 'fontsize', '|', 'justifyleft', 'justifyright', 'justifycenter', 'justifyjustify', '|', 'link', 'unlink', '|', 'emotion', 'spechars', '|', 'blockquote', 'pasteplain', '|', 'date', 'time', '|', 'preview', 'print']
+    ]
+});
+
+var content;
+
+
 $("#save").click(function() {
     var postId = "<{$postinfo.a_id}>";
-    var content = $("#content").val();
     var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-    parent.layer.iframeAuto(index);
+    ue.ready(function() {
+        content = ue.getContent();
+    });
+    // parent.layer.iframeAuto(index);
 
     if ( content == "") {
         layer.msg('请输入文章内容！');
@@ -60,7 +65,7 @@ $("#save").click(function() {
                     var ret = data.ret;
                     if(ret == 0) {
                         layer.msg('操作成功！', {
-                            time: 2000
+                            time: 1500
                         }, function() {
                             parent.layer.close(index);
                         });

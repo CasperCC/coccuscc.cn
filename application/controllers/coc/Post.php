@@ -65,11 +65,10 @@ class Post extends AdminBase_Controller {
 
         $a_id = $this->input->post('a_id');
         $title = $this->input->post('title');
-        $firstcatalog = $this->input->post('firstcatalog');
-        $secondcatalog = $this->input->post('secondcatalog');
         $thirdcatalog = $this->input->post('thirdcatalog');
+        $thirdcatalogname = $this->input->post('thirdcatalogname');
 
-        $result = $this->post_model->changePostInfo($a_id, $title, $firstcatalog, $secondcatalog, $thirdcatalog);
+        $result = $this->post_model->changePostInfo($a_id, $title, $thirdcatalog, $thirdcatalogname);
         if ($result) {
             success_return();
         }
@@ -104,11 +103,13 @@ class Post extends AdminBase_Controller {
 
         $a_id = $this->input->get('a_id');
         $postinfo = $this->post_model->getPostInfo($a_id);
+        $catalog = $this->post_model->getArticleCatalog($a_id);
         $svip = $this->administrator;
         $uid = $this->uid;
 
         if ($postinfo["uid"] == $uid || $svip == 1) {
             $this->smarty->assign('postinfo', $postinfo);
+            $this->smarty->assign('catalog', $catalog);
             $this->smarty->display('admin/post/editsvip.html');
         } else {
             $this->smarty->display('admin/nosvip.html');
