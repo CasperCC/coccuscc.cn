@@ -1,0 +1,194 @@
+<{extends 'admin/templates/base.html'}>
+
+<{block name = title}>编辑文章：<{$postinfo.title}><{/block}>
+
+<{block name = body}>
+<div class="col-md-9">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            修改文章信息
+        </div>
+        <div class="panel-body">
+            <form class="form-horizontal">
+                <br>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">文章标题：</label>
+                    <div class="col-md-7" style="margin-left: -14px">
+                        <input class="form-control" type="text" name="title" value="<{$postinfo.title}>">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">文章分类：</label>
+                    <div class="col-md-3" style="margin-left: -14px;">
+                        <select class="form-control" id="firstcatalog" disabled>
+                            <option value="1">首页</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3" style="margin-left: -20px;">
+                        <select class="form-control" id='secondcatalog'>
+                            <option value="">请选择二级目录</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3" style="margin-left: -20px;">
+                        <select class="form-control" id='thirdcatalog'>
+                            <option value="">请选择三级目录</option>
+                            <option value="<{$catalog.cataloginfo.type_id}>" selected="selected"><{$catalog.cataloginfo.type}></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">文章作者：</label>
+                    <p class="form-control-static"> <{$postinfo.author}></p>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">文章简介：</label>
+                    <textarea rows="4" style="width: 50%;" id="description"><{$postinfo.description}></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">文章内容：</label>
+                    <button id="changecontent" class="btn btn-default" type="button">点击修改文章内容</button>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">文章创建时间：</label>
+                    <p class="form-control-static"> <{$postinfo.created}></p>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">最后更改时间：</label>
+                    <p class="form-control-static"> <{$postinfo.updated}></p>
+                </div>
+                <div class="col-md-3 col-md-offset-8 col-sm-offset-8">
+                    <button id="save" class="btn btn-danger" type="button">确认并保存修改</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<{/block}>
+
+<{block name = js}>
+<script>
+$("#changecontent").click(function() {
+    var postId = "<{$postinfo.a_id}>";
+    layer.open({
+      type: 2,
+      title: '更改文章内容',
+      maxmin: true,
+      shadeClose: false,
+      area : ['800px' , '580px'],
+      content: '/coc/post/updatePostContent?a_id='+postId
+    });
+});
+
+$("document").ready(function() {
+    $.ajax({
+        url: "/coc/category/getCatalogs",
+        type: "POST",
+        data: {"p_id": "1"},
+        dataType: "json",
+        success: function(data) {
+            var secondCategory = data.data;
+            $("#secondcatalog").html("<option value=''>请选择二级目录</option>");
+            $.each(secondCategory, function(i, item) {
+                $("#secondcatalog").append("<option value='" + item.s_id + "'>" + item.c_name + "</option>");
+                $("#secondcatalog").find("option[value='<{$catalog.cataloginfo.p_id}>']").attr("selected", true);
+            });
+        }
+    });
+    var p_id = "<{$catalog.cataloginfo.p_id}>";
+    $.ajax({
+        url: "/coc/category/getCatalogs",
+        type: "POST",
+        data: {"p_id": p_id},
+        dataType: "json",
+        success: function(data) {
+            var thirdCategory = data.data;
+            $("#thirdcatalog").html("<option value=''>请选择三级目录</option>");
+            $.each(thirdCategory, function(i, item) {
+                if (item.level == 3) {
+                    $("#thirdcatalog").append("<option value='" + item.s_id + "'>" + item.c_name + "</option>");
+                    $("#thirdcatalog").find("option[value='<{$catalog.cataloginfo.type_id}>']").attr("selected", true);
+                }
+            });
+        }
+    });
+});
+
+$("#secondcatalog").change(function() {
+    var p_id = secondcatalog.value;
+    $.ajax({
+        url: "/coc/category/getCatalogs",
+        type: "POST",
+        data: {"p_id": p_id},
+        dataType: "json",
+        success: function(data) {
+            var thirdCategory = data.data;
+            $("#thirdcatalog").html("<option value=''>请选择三级目录</option>");
+            $.each(thirdCategory, function(i, item) {
+                if (item.level == 3) {
+                    $("#thirdcatalog").append("<option value='" + item.s_id + "'>" + item.c_name + "</option>");
+                    $("#thirdcatalog").find("option[value='<{$catalog.cataloginfo.type_id}>']").attr("selected", true);
+                }
+            });
+        }
+    });
+});
+
+$("#save").click(function() {
+    var postId = "<{$postinfo.a_id}>";
+    var title = $("input[name='title']").val();
+    var description = $("#description").val();
+    var firstCatalog = firstcatalog.value;
+    var secondCatalog = secondcatalog.value;
+    var thirdCatalog = thirdcatalog.value;
+    var thirdCatalogName = $('#thirdcatalog option:selected').text();
+
+    if ( title == "") {
+        layer.msg('请输入文章标题！');
+    } else if ( firstCatalog == "" || secondCatalog == "" || thirdCatalog == "") {
+        layer.msg('请选择文章目录！');
+    } else {
+        layer.confirm('请确认是否保存修改？', {
+        btn: ['确认','取消']
+        }, function() {
+            $.ajax({
+                url: "/coc/post/updatePostInfo",
+                type: "POST",
+                data: {
+                    "a_id": postId,
+                    "title": title,
+                    "description": description,
+                    "thirdcatalog": thirdCatalog,
+                    "thirdcatalogname": thirdCatalogName
+                },
+                dataType: "json",
+                success: function(data){
+                    var ret = data.ret;
+                    if(ret == 0) {
+                        layer.msg('操作成功！正在跳转为上一页面', {
+                            time: 2000
+                        }, function() {
+                            $(location).attr('href', '/coc/post/list');
+                        });
+                    } else {
+                        layer.msg('操作失败！请重试');
+                    }
+                },
+                error: function() {
+                    layer.msg("请求失败！");
+                }
+            });
+        },function() {
+            layer.msg('已取消');
+        });
+    }
+});
+</script>
+
+<{/block}>
+
+
+
+
+
+
+

@@ -134,6 +134,10 @@ class Post extends AdminBase_Controller {
 
         if ($postinfo["uid"] != $uid && $svip != 1 || $postinfo["status"] == "0") {
             $this->smarty->display('admin/nosvip.html');
+        } else if ($svip == 0) {
+            $this->smarty->assign('postinfo', $postinfo);
+            $this->smarty->assign('catalog', $catalog);
+            $this->smarty->display('admin/post/edit.html');
         } else {
             $this->smarty->assign('postinfo', $postinfo);
             $this->smarty->assign('catalog', $catalog);
