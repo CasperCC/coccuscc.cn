@@ -16,6 +16,7 @@ class AdminBase_Controller extends CI_Controller {
 
         $uid = $this->session->uid;
         $nickname = $this->session->nickname;
+        $username = $this->session->username;
         $administrator = $this->session->administrator;
 
         if(!isset($uid) || !isset($nickname)){
@@ -24,6 +25,7 @@ class AdminBase_Controller extends CI_Controller {
 
         $this->uid = $uid;
         $this->nickname = $nickname;
+        $this->username = $username;
         $this->administrator = $administrator;
 
         $this->smarty->assign('nickname', $nickname);

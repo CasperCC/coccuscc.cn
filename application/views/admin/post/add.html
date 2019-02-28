@@ -1,7 +1,158 @@
 <{extends 'admin/templates/base.html'}>
 
-<{block name = title}>文章管理<{/block}>
+<{block name = title}>添加文章<{/block}>
 
 <{block name = body}>
-    添加文章
+<div class="col-md-9">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            编辑文章信息
+        </div>
+        <div class="panel-body">
+            <form class="form-horizontal">
+                <br>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">文章标题：</label>
+                    <div class="col-md-7" style="margin-left: -14px">
+                        <input class="form-control" type="text" name="title" value="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">文章分类：</label>
+                    <div class="col-md-3" style="margin-left: -14px;">
+                        <select class="form-control" id="firstcatalog" disabled>
+                            <option value="1">首页</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3" style="margin-left: -20px;">
+                        <select class="form-control" id='secondcatalog'>
+                            <option value="">请选择二级目录</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3" style="margin-left: -20px;">
+                        <select class="form-control" id='thirdcatalog'>
+                            <option value="">请选择三级目录</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">文章简介：</label>
+                    <textarea rows="4" style="width: 50%;" id="description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">文章内容：</label>
+                    <button id="changecontent" class="btn btn-default" type="button">点击编辑文章内容</button>
+                    <input class="form-control" id="addcontent" type="hidden" name="addcontent" value="">
+                </div><br><br><br>
+                <div class="col-md-3 col-md-offset-8 col-sm-offset-8">
+                    <button id="save" class="btn btn-danger" type="button">确认并保存文章</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<{/block}>
+
+<{block name = js}>
+<script>
+$("#changecontent").click(function() {
+    layer.open({
+        type: 2,
+        title: '编辑文章内容',
+        maxmin: true,
+        shadeClose: false,
+        area : ['800px' , '580px'],
+        content: '/coc/post/addPostContent'
+    });
+});
+
+$("document").ready(function() {
+    $.ajax({
+        url: "/coc/category/getCatalogs",
+        type: "POST",
+        data: {"p_id": "1"},
+        dataType: "json",
+        success: function(data) {
+            var secondCategory = data.data;
+            $("#secondcatalog").html("<option value=''>请选择二级目录</option>");
+            $.each(secondCategory, function(i, item) {
+                $("#secondcatalog").append("<option value='" + item.s_id + "'>" + item.c_name + "</option>");
+            });
+        }
+    });
+});
+
+$("#secondcatalog").change(function() {
+    var p_id = secondcatalog.value;
+    $.ajax({
+        url: "/coc/category/getCatalogs",
+        type: "POST",
+        data: {"p_id": p_id},
+        dataType: "json",
+        success: function(data) {
+            var thirdCategory = data.data;
+            $("#thirdcatalog").html("<option value=''>请选择三级目录</option>");
+            $.each(thirdCategory, function(i, item) {
+                if (item.level == 3) {
+                    $("#thirdcatalog").append("<option value='" + item.s_id + "'>" + item.c_name + "</option>");
+                }
+            });
+        }
+    });
+});
+
+$("#save").click(function() {
+    var title = $("input[name='title']").val();
+    var content = $("input[name='addcontent']").val();
+    var description = $("#description").val();
+    var firstCatalog = firstcatalog.value;
+    var secondCatalog = secondcatalog.value;
+    var thirdCatalog = thirdcatalog.value;
+    var thirdCatalogName = $('#thirdcatalog option:selected').text();
+
+    if ( title == "") {
+        layer.msg('请输入文章标题！');
+    } else if ( firstCatalog == "" || secondCatalog == "" || thirdCatalog == "") {
+        layer.msg('请选择文章目录！');
+    } else {
+        layer.confirm('请确认是否保存？', {
+        btn: ['确认','取消']
+        }, function() {
+            layer.msg('test');
+            $.ajax({
+                url: "/coc/post/addPostInfo",
+                type: "POST",
+                data: {
+                    "title": title,
+                    "description": description,
+                    "content": content,
+                    "thirdcatalog": thirdCatalog,
+                    "thirdcatalogname": thirdCatalogName
+                },
+                dataType: "json",
+                success: function(data){
+                    var ret = data.ret;
+                    if(ret == 0) {
+                        layer.msg('新建成功！即将跳转到上一页', {
+                            time: 2000
+                        }, function() {
+                            $(location).attr('href', '/coc/post/list');
+                        });
+                    } else if (ret == -1) {
+                        layer.msg('缺少参数');
+                    } else {
+                        layer.msg('操作失败！请重试');
+                    }
+                },
+                error: function() {
+                    layer.msg("请求失败！");
+                }
+            });
+        },function() {
+            layer.msg('已取消');
+        });
+    }
+});
+</script>
+
 <{/block}>

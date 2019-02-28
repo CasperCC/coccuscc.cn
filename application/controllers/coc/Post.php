@@ -65,10 +65,11 @@ class Post extends AdminBase_Controller {
 
         $a_id = $this->input->post('a_id');
         $title = $this->input->post('title');
+        $description = $this->input->post('description');
         $thirdcatalog = $this->input->post('thirdcatalog');
         $thirdcatalogname = $this->input->post('thirdcatalogname');
 
-        $result = $this->post_model->changePostInfo($a_id, $title, $thirdcatalog, $thirdcatalogname);
+        $result = $this->post_model->changePostInfo($a_id, $title, $thirdcatalog, $thirdcatalogname, $description);
         if ($result) {
             success_return();
         }
@@ -98,6 +99,30 @@ class Post extends AdminBase_Controller {
         }
     }
 
+    public function addPostInfo() {
+        $this->load->model('post_model');
+
+        $uid = $this->uid;
+        $username = $this->username;
+        $title = $this->input->post('title');
+        $description = $this->input->post('description');
+        $content = $this->input->post('content');
+        $thirdcatalog = $this->input->post('thirdcatalog');
+        $thirdcatalogname = $this->input->post('thirdcatalogname');
+
+        if ( !isset($uid) || !isset($username) || !isset($title) || !isset($thirdcatalog) || !isset($thirdcatalogname) ) {
+            miss_params();
+        }
+
+        $result = $this->post_model->addArticleInfo($uid, $username, $title, $description, $content, $thirdcatalog, $thirdcatalogname);
+
+        if (!$result) {
+            db_error();
+        }
+
+        success_return();
+    }
+
     public function edit() {
         $this->load->model('post_model');
 
@@ -107,13 +132,17 @@ class Post extends AdminBase_Controller {
         $svip = $this->administrator;
         $uid = $this->uid;
 
-        if ($postinfo["uid"] == $uid || $svip == 1) {
+        if ($postinfo["uid"] != $uid && $svip != 1 || $postinfo["status"] == "0") {
+            $this->smarty->display('admin/nosvip.html');
+        } else {
             $this->smarty->assign('postinfo', $postinfo);
             $this->smarty->assign('catalog', $catalog);
             $this->smarty->display('admin/post/editsvip.html');
-        } else {
-            $this->smarty->display('admin/nosvip.html');
         }
+    }
+
+    public function addPostContent() {
+        $this->smarty->display('admin/post/addcontent.html');
     }
 
     public function list() {

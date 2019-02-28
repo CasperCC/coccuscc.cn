@@ -80,14 +80,13 @@ class Post_model extends CI_Model {
         $this->db->select('a_id, title, uid, author, type_id, type, description, content, status, created, updated');
         $this->db->from('articles');
         $this->db->where('a_id', $a_id);
-        $this->db->where('status !=', 0);
         $postinfo = $this->db->get()->row_array();
         if($postinfo["status"]==1) {
             $postinfo["status"] = "正常";
         } else if($postinfo["status"]==2) {
             $postinfo["status"] = "已封禁";
         } else {
-            $postinfo["status"] = "系统错误！";
+            $postinfo["status"] = 0;
         }
         $postinfo["created"] = date("Y-m-d H:i:s", $postinfo["created"]);
         $postinfo["updated"] = date("Y-m-d H:i:s", $postinfo["updated"]);
@@ -142,10 +141,11 @@ class Post_model extends CI_Model {
     }
 
     // 更改文章信息(通用)
-    public function changePostInfo($a_id, $title, $third, $thirdname) {
+    public function changePostInfo($a_id, $title, $third, $thirdname, $description) {
         $this->db->set('title', $title);
         $this->db->set('type_id', $third);
         $this->db->set('type', $thirdname);
+        $this->db->set('description', $description);
         $this->db->set('updated', time());
         $this->db->where('a_id', $a_id);
         $this->db->update('articles');
@@ -195,6 +195,30 @@ class Post_model extends CI_Model {
     // 删除文章
     public function deleteArticle($a_id) {
         $this->db->set('status', 0);
+        $this->db->set('updated', time());
+        $this->db->where('a_id', $a_id);
+        $this->db->update('articles');
+        return true;
+    }
+
+    public function addArticleInfo($uid, $author, $title, $description, $content, $type_id, $type) {
+        $postinfo = array(
+            'title' => $title,
+            'uid' => $uid,
+            'author' => $author,
+            'content' => $content,
+            'type_id' => $type_id,
+            'type' => $type,
+            'description' => $description,
+            'created' => time(),
+            'updated' => time()
+        );
+        $this->db->insert('articles', $postinfo);
+        return true;
+    }
+
+    public function addArticleContent($a_id, $content) {
+        $this->db->set('content', $content);
         $this->db->set('updated', time());
         $this->db->where('a_id', $a_id);
         $this->db->update('articles');

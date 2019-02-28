@@ -54,12 +54,20 @@
 </html>
 
 <script>
-    $.ajax({
-        url: "main/childCatalog",
-        type: "POST",
-        dataType: "json",
-        data: {
-            "child": <{}>
-        }
+
+$(document).ready(function(){
+    dropdownOpen();
+});
+
+function dropdownOpen() {
+
+    var $dropdownLi = $('li.dropdown');
+
+    $dropdownLi.mouseover(function() {
+        $(this).addClass('open');
+    }).mouseout(function() {
+        $(this).removeClass('open');
     });
+};
+
 </script>

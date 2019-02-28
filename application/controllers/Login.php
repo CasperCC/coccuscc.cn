@@ -19,6 +19,7 @@ class Login extends CI_Controller {
         $this->load->helper('url');
 
         $this->session->unset_userdata('uid');
+        $this->session->unset_userdata('username');
         $this->session->unset_userdata('nickname');
         $this->session->unset_userdata('administrator');
         redirect('/login');

@@ -12,10 +12,10 @@
 
 <body>
     <div class="col-md-10 col-md-offset-2">
-        <script id="container" name="content" type="text/plain"><{$postinfo.content}></script>
+        <script id="container" name="content" type="text/plain"></script>
     </div>
     <div class="col-md-offset-10 col-sm-offset-10">
-        <button id="save" class="btn btn-danger" type="button">确认并保存修改</button>
+        <button id="save" class="btn btn-danger" type="button">确认并保存</button>
     </div>
 
 <script src="/static/libs/jquery.min.js"></script>
@@ -37,17 +37,17 @@ var ue = UE.getEditor('container', {
     elementPathEnabled:false,
     maximumWords: 30000
 });
-
+ue.addListener("ready", function () {
+    var index = parent.layer.getFrameIndex(window.name);
+    var con = parent.$('#addcontent').val();
+    ue.setContent(con);
+});
 var content;
-
-
 $("#save").click(function() {
-    var postId = "<{$postinfo.a_id}>";
     var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
     ue.ready(function() {
         content = ue.getContent();
     });
-    // parent.layer.iframeAuto(index);
 
     if ( content == "") {
         layer.msg('请输入文章内容！');
@@ -55,30 +55,9 @@ $("#save").click(function() {
         layer.confirm('请确认是否保存修改？', {
         btn: ['确认','取消']
         }, function() {
-            $.ajax({
-                url: "/coc/post/changePostContent",
-                type: "POST",
-                data: {
-                    "a_id": postId,
-                    "content": content
-                },
-                dataType: "json",
-                success: function(data){
-                    var ret = data.ret;
-                    if(ret == 0) {
-                        layer.msg('操作成功！', {
-                            time: 1500
-                        }, function() {
-                            parent.layer.close(index);
-                        });
-                    } else {
-                        layer.msg('操作失败！请重试');
-                    }
-                },
-                error: function() {
-                    layer.msg("请求失败！");
-                }
-            });
+            layer.msg('已保存');
+            parent.$('#addcontent').val(content);
+            parent.layer.close(index);
         },function() {
             layer.msg('已取消');
         });

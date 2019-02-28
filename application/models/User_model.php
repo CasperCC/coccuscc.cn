@@ -228,6 +228,7 @@ class User_model extends CI_Model
         else
         {
             $this->session->uid = $userinfo["uid"];
+            $this->session->username = $userinfo["username"];
             $this->session->administrator = $userinfo["administrator"];
             if(!isset($userinfo["nickname"])) {
                 $this->session->nickname = $userinfo["username"];
