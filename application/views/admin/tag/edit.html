@@ -1,0 +1,82 @@
+<{extends 'admin/templates/base.html'}>
+
+<{block name = title}>编辑标签：<{$info.t_name}><{/block}>
+
+<{block name = body}>
+<div class="col-md-9">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            修改标签信息
+        </div>
+        <div class="panel-body">
+            <form class="form-horizontal">
+                <br>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">标签名称：</label>
+                    <div class="col-md-5" style="margin-left: -14px">
+                        <input class="form-control" type="text" id="tagname" value="<{$info.t_name}>">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">标签内容：</label>
+                    <a class="btn btn-default" href="/main/tag?t_id=<{$info.t_id}>&tag=<{$info.t_name}>" role="button">查看该标签下文章</a>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">目录创建时间：</label>
+                    <p class="form-control-static"> <{$info.created}></p>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">最后更改时间：</label>
+                    <p class="form-control-static"> <{$info.updated}></p>
+                </div>
+                <div class="col-md-3 col-md-offset-8 col-sm-offset-8">
+                    <button id="save" class="btn btn-danger" type="button">确认并保存修改</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<{/block}>
+
+<{block name = js}>
+<script>
+$("#save").click(function() {
+    var t_id = "<{$info.t_id}>";
+    var tagName = $("#tagname").val();
+    if ( tagName == "") {
+        layer.msg('请输入标签名称！');
+    } else {
+        layer.confirm('请确认是否保存修改？', {
+        btn: ['确认','取消']
+        }, function() {
+            $.ajax({
+                url: "/coc/tag/updateTagInfo",
+                type: "POST",
+                data: {
+                    "t_id": t_id,
+                    "t_name": tagName
+                },
+                dataType: "json",
+                success: function(data){
+                    var ret = data.ret;
+                    if(ret == 0) {
+                        layer.msg('操作成功！正在跳转到目录管理页面！', {
+                            time: 2000
+                        }, function() {
+                            $(location).attr('href', '/coc/tag/list');
+                        });
+                    } else {
+                        layer.msg('操作失败！请重试');
+                    }
+                },
+                error: function() {
+                    layer.msg("请求失败！");
+                }
+            });
+        },function() {
+            layer.msg('已取消');
+        });
+    }
+});
+</script>
+<{/block}>

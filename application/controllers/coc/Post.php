@@ -68,8 +68,10 @@ class Post extends AdminBase_Controller {
         $description = $this->input->post('description');
         $thirdcatalog = $this->input->post('thirdcatalog');
         $thirdcatalogname = $this->input->post('thirdcatalogname');
+        $t_id = $this->input->post('t_id');
+        $t_name = $this->input->post('t_name');
 
-        $result = $this->post_model->changePostInfo($a_id, $title, $thirdcatalog, $thirdcatalogname, $description);
+        $result = $this->post_model->changePostInfo($a_id, $title, $thirdcatalog, $thirdcatalogname, $description, $t_id, $t_name);
         if ($result) {
             success_return();
         }
@@ -107,6 +109,8 @@ class Post extends AdminBase_Controller {
         $title = $this->input->post('title');
         $description = $this->input->post('description');
         $content = $this->input->post('content');
+        $t_id = $this->input->post('t_id');
+        $t_name = $this->input->post('t_name');
         $thirdcatalog = $this->input->post('thirdcatalog');
         $thirdcatalogname = $this->input->post('thirdcatalogname');
 
@@ -114,7 +118,7 @@ class Post extends AdminBase_Controller {
             miss_params();
         }
 
-        $result = $this->post_model->addArticleInfo($uid, $username, $title, $description, $content, $thirdcatalog, $thirdcatalogname);
+        $result = $this->post_model->addArticleInfo($uid, $username, $title, $description, $content, $thirdcatalog, $thirdcatalogname, $t_id, $t_name);
 
         if (!$result) {
             db_error();

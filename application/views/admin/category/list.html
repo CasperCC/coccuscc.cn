@@ -96,12 +96,12 @@
 
     window.operateEvents = {
         'click #delete-row': function(e, value, row, index) {  // 删除记录操作
-            layer.confirm('请确认是否删除这个目录？', {
+            layer.confirm('该目录下的所有文章都将被删除！<br>请确认是否删除这个目录？<br>', {
                 btn: ['确认','取消']
             }, function() {
                 var s_id = row.s_id;
                 $.ajax({
-                    url: "/coc/category/deleteCategory",
+                    url: "/coc/category/delete",
                     dataType: "json",
                     type: "POST",
                     data: {

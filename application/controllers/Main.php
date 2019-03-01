@@ -35,6 +35,18 @@ class Main extends Base_Controller {
         $this->smarty->display('main/pages/articleview.html');
     }
 
+    public function tag() {
+        $this->load->model('tag_model');
+
+        $t_id = $this->input->get('t_id');
+        $t_name = $this->input->get('t_name');
+        $info = $this->tag_model->getTagArticles($t_id);
+
+        $this->smarty->assign('articles', $info);
+        $this->smarty->assign('tag', $t_name);
+        $this->smarty->display('main/pages/tags/tagview.html');
+    }
+
     public function category() {
         $this->load->model('category_model');
 

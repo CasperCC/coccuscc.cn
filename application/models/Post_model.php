@@ -8,7 +8,7 @@ class Post_model extends CI_Model {
 
     // 获取用户个人文章(普通用户功能)
     public function getUserArticlesList($page, $size, $uid) {
-        $this->db->select('a_id, title, uid, author, type, status, created, updated');
+        $this->db->select('a_id, title, uid, author, type, t_name, status, created, updated');
         $this->db->where('uid', $uid);
         $this->db->where('status !=', 0);
         $count = $this->db->count_all_results('articles', FALSE);
@@ -37,7 +37,7 @@ class Post_model extends CI_Model {
 
     // 获取文章列表(超级用户功能)
     public function getArticlesList($page, $size) {
-        $this->db->select('a_id, title, uid, author, type, status, created, updated');
+        $this->db->select('a_id, title, uid, author, type, t_name, status, created, updated');
         $this->db->where('status !=', 0);
         $count = $this->db->count_all_results('articles', FALSE);
         $this->db->limit($size, ($page-1)*$size);
@@ -77,7 +77,7 @@ class Post_model extends CI_Model {
 
     // 获取文章信息(通用)
     public function getPostInfo($a_id) {
-        $this->db->select('a_id, title, uid, author, type_id, type, description, content, status, created, updated');
+        $this->db->select('a_id, title, uid, author, type_id, type, t_id, description, content, status, created, updated');
         $this->db->from('articles');
         $this->db->where('a_id', $a_id);
         $postinfo = $this->db->get()->row_array();
@@ -141,10 +141,12 @@ class Post_model extends CI_Model {
     }
 
     // 更改文章信息(通用)
-    public function changePostInfo($a_id, $title, $third, $thirdname, $description) {
+    public function changePostInfo($a_id, $title, $third, $thirdname, $description, $t_id, $t_name) {
         $this->db->set('title', $title);
         $this->db->set('type_id', $third);
         $this->db->set('type', $thirdname);
+        $this->db->set('t_id', $t_id);
+        $this->db->set('t_name', $t_name);
         $this->db->set('description', $description);
         $this->db->set('updated', time());
         $this->db->where('a_id', $a_id);
@@ -201,7 +203,7 @@ class Post_model extends CI_Model {
         return true;
     }
 
-    public function addArticleInfo($uid, $author, $title, $description, $content, $type_id, $type) {
+    public function addArticleInfo($uid, $author, $title, $description, $content, $type_id, $type, $t_id, $t_name) {
         $postinfo = array(
             'title' => $title,
             'uid' => $uid,
@@ -209,6 +211,8 @@ class Post_model extends CI_Model {
             'content' => $content,
             'type_id' => $type_id,
             'type' => $type,
+            't_id' => $t_id,
+            't_name' => $t_name,
             'description' => $description,
             'created' => time(),
             'updated' => time()

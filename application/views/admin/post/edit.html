@@ -37,6 +37,12 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label class="col-md-3 control-label">文章标签：</label>
+                    <div class="col-md-3" style="margin-left: -14px;">
+                        <select class="form-control" id="tag"></select>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label class="col-md-3 control-label">文章作者：</label>
                     <p class="form-control-static"> <{$postinfo.author}></p>
                 </div>
@@ -108,6 +114,20 @@ $("document").ready(function() {
                     $("#thirdcatalog").append("<option value='" + item.s_id + "'>" + item.c_name + "</option>");
                     $("#thirdcatalog").find("option[value='<{$catalog.cataloginfo.type_id}>']").attr("selected", true);
                 }
+            });
+        }
+    });
+    $.ajax({
+        url: "/coc/tag/getTags",
+        type: "POST",
+        dataType: "json",
+        success: function(data) {
+            var tag = data.data;
+            $("#tag").html("<option value=''>请选择标签</option>");
+            $.each(tag, function(i, item) {
+                $("#tag").append("<option value='" + item.t_id + "'>" + item.t_name + "</option>");
+                $("#tag").find("option[value='<{$postinfo.t_id}>']").attr("selected", true);
+
             });
         }
     });

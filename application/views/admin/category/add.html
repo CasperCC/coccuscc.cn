@@ -1,7 +1,117 @@
 <{extends 'admin/templates/base.html'}>
 
-<{block name = title}>目录管理<{/block}>
+<{block name = title}>添加目录<{/block}>
 
 <{block name = body}>
-    添加目录
+<div class="col-md-9">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            编辑目录信息
+        </div>
+        <div class="panel-body">
+            <form class="form-horizontal">
+                <br>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">目录名称：</label>
+                    <div class="col-md-6" style="margin-left: -14px">
+                        <input class="form-control" type="text" name="c_name" value="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">目录路径：</label>
+                    <div class="col-md-3" style="margin-left: -15px;">
+                        <select class="form-control" id='level'>
+                            <option value="">请选择目录级别</option>
+                            <option value="2">二级目录</option>
+                            <option value="3">三级目录</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3" style="margin-left: -20px;">
+                        <select class="form-control" id='parentcatalog'></select>
+                    </div>
+                </div>
+                <div class="col-md-offset-2">
+                    <em>(*如果新建二级目录需要继续新建下属目录，并将展示在导航栏中*)</em>
+                </div>
+                <br><br><br>
+                <div class="col-md-3 col-md-offset-8 col-sm-offset-8">
+                    <button id="save" class="btn btn-danger" type="button">确认并保存文章</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<{/block}>
+
+<{block name = js}>
+<script>
+$("#level").change(function() {
+    var level = $("#level option:selected").val()-1;
+    $.ajax({
+        url: "/coc/category/getParentCatalogs",
+        type: "POST",
+        data: {"level": level},
+        dataType: "json",
+        success: function(data) {
+            var parentCategory = data.data;
+            $("#parentcatalog").html("<option value=''>请选择上级目录</option>");
+            $.each(parentCategory, function(i, item) {
+                $("#parentcatalog").append("<option value='" + item.s_id + "'>" + item.c_name + "</option>");
+            });
+        }
+    });
+});
+
+$("#save").click(function() {
+    var c_name = $("input[name='c_name']").val();
+    var level = $("#level option:selected").val();
+    var parentCategoryID = $("#parentcatalog option:selected").val();
+
+    if ( c_name == "" || level == "" || parentCategoryID == "") {
+        layer.msg('必填项不能为空！');
+    } else {
+        layer.confirm('请确认是否保存？', {
+        btn: ['确认','取消']
+        }, function() {
+            $.ajax({
+                url: "/coc/category/addCategory",
+                type: "POST",
+                data: {
+                    "c_name": c_name,
+                    "level": level,
+                    "p_id": parentCategoryID
+                },
+                dataType: "json",
+                success: function(data){
+                    var ret = data.ret;
+                    var s_id = data.data;
+                    if(ret == 0 && level == 2) {
+                        layer.msg('新建成功！即将跳转到编辑下属目录页面！', {
+                            time: 2000
+                        }, function() {
+                            $(location).attr('href', '/coc/category/edit?s_id='+s_id);
+                        });
+                    } else if (ret == 0 && level == 3) {
+                        layer.msg('新建成功！即将跳转到目录管理页面！', {
+                            time: 2000
+                        }, function() {
+                            $(location).attr('href', '/coc/category/list');
+                        });
+                    } else if (ret == -1) {
+                        layer.msg('缺少参数');
+                    } else {
+                        layer.msg('操作失败！请重试');
+                    }
+                },
+                error: function() {
+                    layer.msg("请求失败！");
+                }
+            });
+        },function() {
+            layer.msg('已取消');
+        });
+    }
+});
+</script>
+
 <{/block}>

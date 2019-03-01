@@ -34,10 +34,13 @@ var ue = UE.getEditor('container', {
         ['fullscreen', 'source', '|', 'undo', 'redo', '|', 'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'horizontal', '|', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc'],
         ['insertcode', 'fontfamily', 'fontsize', '|', 'justifyleft', 'justifyright', 'justifycenter', 'justifyjustify', '|', 'link', 'unlink', '|', 'emotion', 'spechars', '|', 'blockquote', 'pasteplain', '|', 'date', 'time', '|', 'preview', 'print']
     ],
+    autoHeightEnabled: false,
     elementPathEnabled:false,
     maximumWords: 30000
 });
-
+ue.addListener("ready", function () {
+    ue.setHeight(400);
+});
 var content;
 
 

@@ -34,6 +34,7 @@ var ue = UE.getEditor('container', {
         ['fullscreen', 'source', '|', 'undo', 'redo', '|', 'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'horizontal', '|', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc'],
         ['insertcode', 'fontfamily', 'fontsize', '|', 'justifyleft', 'justifyright', 'justifycenter', 'justifyjustify', '|', 'link', 'unlink', '|', 'emotion', 'spechars', '|', 'blockquote', 'pasteplain', '|', 'date', 'time', '|', 'preview', 'print']
     ],
+    autoHeightEnabled: false,
     elementPathEnabled:false,
     maximumWords: 30000
 });
@@ -41,6 +42,7 @@ ue.addListener("ready", function () {
     var index = parent.layer.getFrameIndex(window.name);
     var con = parent.$('#addcontent').val();
     ue.setContent(con);
+    ue.setHeight(400);
 });
 var content;
 $("#save").click(function() {
@@ -52,7 +54,7 @@ $("#save").click(function() {
     if ( content == "") {
         layer.msg('请输入文章内容！');
     } else {
-        layer.confirm('请确认是否保存修改？', {
+        layer.confirm('请确认是否保存文章？', {
         btn: ['确认','取消']
         }, function() {
             layer.msg('已保存');

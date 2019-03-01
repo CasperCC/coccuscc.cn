@@ -1,7 +1,73 @@
 <{extends 'admin/templates/base.html'}>
 
-<{block name = title}>标签管理<{/block}>
+<{block name = title}>添加标签<{/block}>
 
 <{block name = body}>
-    添加标签
+<div class="col-md-9">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            编辑标签信息
+        </div>
+        <div class="panel-body">
+            <form class="form-horizontal">
+                <br>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">标签名称：</label>
+                    <div class="col-md-6" style="margin-left: -14px">
+                        <input class="form-control" type="text" name="t_name" value="">
+                    </div>
+                </div>
+                <br><br><br>
+                <div class="col-md-3 col-md-offset-8 col-sm-offset-8">
+                    <button id="save" class="btn btn-danger" type="button">确认并保存标签</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<{/block}>
+
+<{block name = js}>
+<script>
+$("#save").click(function() {
+    var t_name = $("input[name='t_name']").val();
+
+    if ( t_name == "") {
+        layer.msg('请输入标签名称！');
+    } else {
+        layer.confirm('请确认是否保存？', {
+        btn: ['确认','取消']
+        }, function() {
+            $.ajax({
+                url: "/coc/tag/addTag",
+                type: "POST",
+                data: {
+                    "t_name": t_name
+                },
+                dataType: "json",
+                success: function(data){
+                    var ret = data.ret;
+                    if(ret == 0) {
+                        layer.msg('新建成功！即将跳转到标签管理页面！', {
+                            time: 2000
+                        }, function() {
+                            $(location).attr('href', '/coc/tag/list');
+                        });
+                    } else if (ret == -1) {
+                        layer.msg('缺少参数');
+                    } else {
+                        layer.msg('操作失败！请重试');
+                    }
+                },
+                error: function() {
+                    layer.msg("请求失败！");
+                }
+            });
+        },function() {
+            layer.msg('已取消');
+        });
+    }
+});
+</script>
+
 <{/block}>

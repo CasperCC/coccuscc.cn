@@ -13,6 +13,29 @@ class Category_model extends CI_Model {
         return $category;
     }
 
+    public function getCatalogInfo($s_id) {
+        $this->db->select('s_id, c_name, p_id, created, updated');
+        $this->db->from('catalogs');
+        $this->db->where('status !=', 0);
+        $this->db->where('s_id', $s_id);
+        $info = $this->db->get()->row_array();
+        $info["created"] = date("Y-m-d H:i:s", $info["created"]);
+        $info["updated"] = date("Y-m-d H:i:s", $info["updated"]);
+        return $info;
+    }
+
+    public function updateCatalogInfo($s_id, $c_name) {
+        $this->db->set('c_name', $c_name);
+        $this->db->set('updated', time());
+        $this->db->where('s_id', $s_id);
+        $this->db->update('catalogs');
+
+        $this->db->set('type', $c_name);
+        $this->db->where('type_id', $s_id);
+        $this->db->update('articles');
+        return true;
+    }
+
     public function getCatalogsList($page, $size) {
         $this->db->where('status !=', '0');
         $count = $this->db->count_all_results('catalogs', FALSE);
@@ -38,6 +61,39 @@ class Category_model extends CI_Model {
         );
     }
 
+    public function addCatalogInfo($c_name, $p_id, $level) {
+        $info = array(
+            'c_name' => $c_name,
+            'p_id' => $p_id,
+            'level' => $level,
+            'created' => time(),
+            'updated' => time()
+        );
+        $this->db->insert('catalogs', $info);
+        $s_id = $this->db->insert_id();
+
+        if ($level == 2) {
+            $childinfo = array(
+                'c_name' => "默认目录",
+                'p_id' => $s_id,
+                'level' => 3,
+                'created' => time(),
+                'updated' => time()
+            );
+            $this->db->insert('catalogs', $childinfo);
+            $s_id = $this->db->insert_id();
+        }
+        return $s_id;
+    }
+
+    public function getParentCatelogs($level) {
+        $this->db->select('s_id, c_name');
+        $this->db->from('catalogs');
+        $this->db->where('level', $level);
+        $category = $this->db->get()->result_array();
+        return $category;
+    }
+
     public function getCategoryArticles($type_id) {
         $this->db->from('articles');
         $this->db->where('status !=', 0);
@@ -55,6 +111,19 @@ class Category_model extends CI_Model {
         $this->db->where('p_id', $p_id);
         $category = $this->db->get()->result_array();
         return $category;
+    }
+
+    public function deleteCategory($s_id) {
+        $this->db->set('status', 0);
+        $this->db->set('updated', time());
+        $this->db->where('s_id', $s_id);
+        $this->db->update('catalogs');
+
+        $this->db->set('status', 0);
+        $this->db->set('updated', time());
+        $this->db->where('type_id', $s_id);
+        $this->db->update('articles');
+        return true;
     }
 
 }

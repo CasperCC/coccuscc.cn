@@ -37,6 +37,12 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label class="col-md-3 control-label">文章标签：</label>
+                    <div class="col-md-3" style="margin-left: -14px;">
+                        <select class="form-control" id="tag"></select>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label class="col-md-3 control-label">文章作者：</label>
                     <p class="form-control-static"> <{$postinfo.author}></p>
                 </div>
@@ -173,6 +179,20 @@ $("document").ready(function() {
             });
         }
     });
+    $.ajax({
+        url: "/coc/tag/getTags",
+        type: "POST",
+        dataType: "json",
+        success: function(data) {
+            var tag = data.data;
+            $("#tag").html("<option value=''>请选择标签</option>");
+            $.each(tag, function(i, item) {
+                $("#tag").append("<option value='" + item.t_id + "'>" + item.t_name + "</option>");
+                $("#tag").find("option[value='<{$postinfo.t_id}>']").attr("selected", true);
+
+            });
+        }
+    });
 });
 
 $("#secondcatalog").change(function() {
@@ -203,6 +223,8 @@ $("#save").click(function() {
     var secondCatalog = secondcatalog.value;
     var thirdCatalog = thirdcatalog.value;
     var thirdCatalogName = $('#thirdcatalog option:selected').text();
+    var t_id = $('#tag option:selected').val();
+    var t_name = $('#tag option:selected').text();
 
     if ( title == "") {
         layer.msg('请输入文章标题！');
@@ -218,6 +240,8 @@ $("#save").click(function() {
                 data: {
                     "a_id": postId,
                     "title": title,
+                    "t_id": t_id,
+                    "t_name": t_name,
                     "description": description,
                     "thirdcatalog": thirdCatalog,
                     "thirdcatalogname": thirdCatalogName
