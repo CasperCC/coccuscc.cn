@@ -9,17 +9,23 @@
     <link href="/static/libs/metisMenu.min.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="/static/libs/font-awesome.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
     <style>
         p.time {color: #808080}
         body {
             padding-top: 50px;
             background-image: url('/static/images/background.jpg');
         }
+        a.tag {
+            color: #808080;
+            margin-left: 10px;
+        }
         a.catalog {
-             margin-top: 5px;
-             margin-bottom: 5px;
-             margin-left: 5px;
-             margin-right: 5px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            margin-left: 5px;
+            margin-right: 5px;
         }
         <{block name = style}><{/block}>
     </style>
@@ -47,6 +53,7 @@
     <{include 'main/templates/footer.html'}>
     <script src="/static/libs/jquery.min.js"></script>
     <script src="/static/libs/bootstrap.min.js" ></script>
+    <script src="/static/libs/bootstrap-paginator.min.js"></script>
 
 
 </body>
@@ -57,17 +64,35 @@
 
 $(document).ready(function(){
     dropdownOpen();
+    checkuser();
 });
 
 function dropdownOpen() {
 
-    var $dropdownLi = $('li.dropdown');
+    var dropdownLi = $('li.dropdown');
 
-    $dropdownLi.mouseover(function() {
+    dropdownLi.mouseover(function() {
         $(this).addClass('open');
     }).mouseout(function() {
         $(this).removeClass('open');
     });
 };
 
+function checkuser() {
+    $.ajax({
+        url: "/coc/user/checkUser",
+        success: function(data) {
+            var uid = data.data;
+            if ( uid != null) {
+                $("#login").html("");
+                $("#register").html("");
+            }
+        },
+        error: function() {
+            $("#login").html("");
+            $("#register").html("");
+        }
+    });
+}
 </script>
+<{block name=jquery}><{/block}>

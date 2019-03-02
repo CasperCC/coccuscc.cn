@@ -3,5 +3,26 @@
 <{block name = title}>后台总览<{/block}>
 
 <{block name = body}>
-暂无消息
+<div class="col-lg-3 col-md-6">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-xs-3">
+                    <i class="fa fa-file-text fa-5x"></i>
+                </div>
+                <div class="col-xs-9 text-right">
+                    <div class="huge"><{$count.article}></div>
+                    <div>New Articles!</div>
+                </div>
+            </div>
+        </div>
+        <a href="/coc/main/detail?type=article">
+            <div class="panel-footer">
+                <span class="pull-left">View Details</span>
+                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                <div class="clearfix"></div>
+            </div>
+        </a>
+    </div>
+</div>
 <{/block}>

@@ -14,14 +14,26 @@
         <h3 class="panel-title"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> 搜索</h3>
     </div>
     <div class="panel-body">
-        <form action="https://coccuscc.cn/news/view" method="get" accept-charset="utf-8">
+        <form action="/main/query" method="get" accept-charset="utf-8">
         <div class="input-group">
-            <input type="text" class="form-control" placeholder="关键字" name="title" value="" required>
+            <input type="text" class="form-control" placeholder="关键字" name="title" value="<{$title}>" required>
             <span class="input-group-btn">
-                <button class="btn btn-default" formaction="https://coccuscc.cn/news/view" type="submit">全文搜索</button>
+                <button class="btn btn-default" formaction="/main/query" type="submit">全文搜索</button>
             </span>
         </div>
         </form>
+    </div>
+</div>
+<br>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-tags"></i> 标签列表</h3>
+    </div>
+    <div class="panel-body">
+        <{foreach $tag as $info}>
+            <a class="tag" href="/main/tag?t_id=<{$info.t_id}>&tag=<{$info.t_name}>"><{$info.t_name}></a> <span class="badge"><{$info.count}></span><br>
+        <{/foreach}>
     </div>
 </div>
 <br>

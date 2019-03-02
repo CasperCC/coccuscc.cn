@@ -106,6 +106,13 @@ class User extends AdminBase_Controller {
         }
     }
 
+    public function checkUser() {
+        $uid = $this->uid;
+        if (isset($uid) && $uid!="") {
+            success_return($uid);
+        }
+    }
+
     public function list() {
         $this->checkSvip();
         $this->smarty->display('admin/user/list.html');

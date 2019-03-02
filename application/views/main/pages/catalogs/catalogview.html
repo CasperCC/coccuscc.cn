@@ -4,12 +4,6 @@
 
 <{block name = body}>
     <div class="col-md-8">
-<!--         <ol class="breadcrumb">
-            <{foreach $type as $cata}>
-                <li style="font-size: large;"><a href="<{$cata.url}>"><{$cata.c_name}></a></li>
-            <{/foreach}>
-            <li class="active" style="font-size: large;"><{$catalog}></li>
-        </ol> -->
     <{foreach $articles as $v}>
         <div class="panel panel-default">
             <div class="panel-body">
@@ -19,7 +13,7 @@
                 <br><br><br><br>
                 <ul class="list-inline">
                     <li class="navbar-left">
-                        <p class="time">最后更新时间：<{$v.updated}></p>
+                        <p class="time"><i class="fa fa-calendar" aria-hidden="true"></i> 最后更新时间：<{$v.updated}></p>
                     </li>
                     <li class="navbar-right" style="margin-right: 20px;">
                         <a class="btn btn-default" href="/main/view?a_id=<{$v.a_id}>" role="button"> 阅读 <span class="glyphicon glyphicon-hand-up" aria-hidden="true"></span></a>
@@ -30,3 +24,63 @@
     <{/foreach}>
     </div>
 <{/block}>
+
+<{block name = navigation}>
+<div class="col-md-offset-5">
+    <ul id="page"></ul>
+</div>
+<{/block}>
+
+<{block name = jquery}>
+<script>
+    var num;
+    $.ajax({
+        url: "/main/catalogPagination",
+        type: "POST",
+        data: {
+            "s_id": <{$type_id}>
+        },
+        dataType: "json",
+        success: function(data) {
+            num = data.count;
+            $('#page').bootstrapPaginator({
+                bootstrapMajorVersion: 3,
+                currentPage: <{$page}>,
+                numberOfPages: 5,
+                totalPages: num,
+                shouldShowPage:function(type, page, current){
+                    switch(type)
+                    {
+                        case "first":
+                        case "last":
+                            return false;
+                        default:
+                            return true;
+                    }
+                },
+                useBootstrapTooltip: false,
+                size:'large',
+                pageUrl:function(type,page, current){
+                    return '/main/category?s_id=<{$type_id}>&catalog=<{$catalog}>'+'&page='+page;
+                },
+                itemTexts: function (type, page, current) {
+                    switch (type) {
+                    case "prev":
+                        return "上一页";
+                    case "next":
+                        return "下一页";
+                    case "page":
+                        return page;
+                    }
+                },
+                itemContainerClass: function (type, page, current) {
+                    return (page === current) ? "disabled" : "pointer-cursor";
+                }
+            });
+        }
+    });
+
+</script>
+<{/block}>
+
+

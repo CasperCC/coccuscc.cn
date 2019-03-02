@@ -46,6 +46,17 @@ class Tag_model extends CI_Model {
         return $taginfo;
     }
 
+    public function getTagCount() {
+        $this->db->select('tags.t_id, tags.t_name, count(*) as count');
+        $this->db->from('articles');
+        $this->db->join('tags', 'tags.t_id=articles.t_id');
+        $this->db->where('tags.status', 1);
+        $this->db->where('articles.status', 1);
+        $this->db->group_by('tags.t_id');
+        $info = $this->db->get()->result_array();
+        return $info;
+    }
+
     public function addTagInfo($t_name) {
         $info = array(
             't_name' => $t_name,
@@ -56,15 +67,19 @@ class Tag_model extends CI_Model {
         return true;
     }
 
-    public function getTagArticles($t_id) {
-        $this->db->from('articles');
+    public function getTagArticles($t_id, $page, $size) {
         $this->db->where('status !=', 0);
         $this->db->where('t_id', $t_id);
+        $count = $this->db->count_all_results('articles', FALSE);
+        $this->db->limit($size, ($page-1)*$size);
         $articlesinfo = $this->db->get()->result_array();
         foreach ($articlesinfo as &$v) {
             $v["updated"] = date("Y-m-d H:i:s", $v["updated"]);
         }
-        return $articlesinfo;
+        return array(
+            'articles' => $articlesinfo,
+            'count' => $count
+        );
     }
 
     public function updateTag($t_id, $t_name) {

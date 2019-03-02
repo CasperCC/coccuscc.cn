@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-function list_return($count, $data) //返回用户列表数据
+function list_return($count, $data="") //返回用户列表数据
 {
     $ret = 0;
     $msg = 'ok';

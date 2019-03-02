@@ -63,6 +63,24 @@ class Post_model extends CI_Model {
         );
     }
 
+    public function getArticles($page, $size) {
+        $this->db->select('a_id, title, uid, author, type, t_name, description, created, updated');
+        $this->db->where('status !=', 0);
+        $count = $this->db->count_all_results('articles', FALSE);
+        $this->db->order_by('updated', 'desc');
+        $this->db->limit($size, ($page-1)*$size);
+        $postinfo = $this->db->get()->result_array();
+        foreach ($postinfo as &$value)
+        {
+            $value["created"] = date("Y-m-d H:i:s", $value["created"]);
+            $value["updated"] = date("Y-m-d H:i:s", $value["updated"]);
+        }
+        return array(
+            'count' => $count,
+            'postinfo' => $postinfo
+        );
+    }
+
     // 查看文章(通用)
     public function getArticle($a_id) {
         $this->db->select('articles.title, articles.author, articles.type_id, articles.type, articles.description, articles.content, articles.status, articles.updated, catalogs.p_id');
@@ -162,37 +180,6 @@ class Post_model extends CI_Model {
         $this->db->update('articles');
         return true;
     }
-
-    // 获取当前目录(通用)
-    // public function getCatalogs($type) {
-    //     $this->db->from('articles');
-    //     $this->db->select('a_id, title, author, description, updated');
-    //     $this->db->where('type', $type);
-    //     $articles = $this->db->get()->result_array();
-    //     foreach ($articles as &$v) {
-    //         $v["updated"] = date("Y-m-d H:i:s", $v["updated"]);
-    //     }
-    //     return $articles;
-    // }
-    // public function getCatalogs() {
-    //     $this->db->from('catalogs');
-    //     $this->db->where('level', 1);
-    //     $firstcatalogs = $this->db->get()->result_array(); //获取一级目录
-
-    //     $this->db->from('catalogs');
-    //     $this->db->where('level', 2);
-    //     $secondcatalogs = $this->db->get()->result_array(); //获取二级目录
-
-    //     $this->db->from('catalogs');
-    //     $this->db->where('level', 3);
-    //     $thirdcatalogs = $this->db->get()->result_array(); //获取三级目录
-
-    //     return array(
-    //         'firstcatalogs' => $firstcatalogs,
-    //         'secondcatalogs' => $secondcatalogs,
-    //         'thirdcatalogs' => $thirdcatalogs
-    //         );
-    // }
 
     // 删除文章
     public function deleteArticle($a_id) {

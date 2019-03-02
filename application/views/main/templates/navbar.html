@@ -16,8 +16,8 @@
             <ul class="nav navbar-nav navbar-right">
                 <{foreach $catalogList.1.child as $k => $v}>
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" onmouseover="alert='fuck'"> <{$v.c_name}> </a>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <{$v.c_name}> </a>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" id="dropdown-menu">
                         <{foreach $v.child as $ck => $cv}>
                         <li><a href="/main/category?s_id=<{$v.child.$ck.s_id}>&catalog=<{$v.child.$ck.c_name}>"><{$v.child.$ck.c_name}></a></li>
                         <{/foreach}>
@@ -25,8 +25,8 @@
                 </li>
                 <{/foreach}>
                 <li><a href="/coc"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> 控制台 </a></li>
-                <li><a href="/login/"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> 登录 </a></li>
-                <li style="margin-right: 10px;"><a href="/login/registerView"><span class="glyphicon glyphicon-cloud" aria-hidden="true"></span> 注册 </a></li>
+                <li id="login"><a href="/login/"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> 登录 </a></li>
+                <li id="register" style="margin-right: 10px;"><a href="/login/registerView"><span class="glyphicon glyphicon-cloud" aria-hidden="true"></span> 注册 </a></li>
             </ul>
         </div>
 

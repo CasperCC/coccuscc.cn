@@ -1,10 +1,10 @@
 <{extends 'main/templates/base.html'}>
 
-<{block name = title}>查看标签：<{$tag_name}><{/block}>
+<{block name = title}>查询关键字：<{$title}><{/block}>
 
 <{block name = body}>
     <div class="col-md-8">
-    <{foreach $articles as $v}>
+    <{foreach $result as $v}>
         <div class="panel panel-default">
             <div class="panel-body">
                 <h3 class="title"><a href="/main/view?a_id=<{$v.a_id}>"><{$v.title}></a></h3>
@@ -35,10 +35,10 @@
 <script>
     var num;
     $.ajax({
-        url: "/main/tagPagination",
+        url: "/main/queryPagination",
         type: "POST",
         data: {
-            "t_id": <{$t_id}>
+            "title": "<{$title}>"
         },
         dataType: "json",
         success: function(data) {
@@ -61,7 +61,7 @@
                 useBootstrapTooltip: false,
                 size:'large',
                 pageUrl:function(type,page, current){
-                    return '/main/tag?t_id=<{$t_id}>&tag=<{$tag_name}>'+'&page='+page;
+                    return '/main/query?title='+'<{$title}>'+'&page='+page;
                 },
                 itemTexts: function (type, page, current) {
                     switch (type) {

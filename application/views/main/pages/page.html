@@ -12,7 +12,7 @@
             <br><br><br><br>
             <ul class="list-inline">
                 <li class="navbar-left">
-                    <p class="time">最后更新时间：<{$v.updated}></p>
+                    <p class="time"><i class="fa fa-calendar" aria-hidden="true"></i> 最后更新时间：<{$v.updated}></p>
                 </li>
                 <li class="navbar-right" style="margin-right: 20px;">
                     <a class="btn btn-default" href="/main/view?a_id=<{$v.a_id}>"" role="button"> 阅读 <span class="glyphicon glyphicon-hand-up" aria-hidden="true"></span></a>
@@ -26,15 +26,53 @@
 
 <{block name = navigation}>
 <div class="col-md-offset-5">
-    <nav aria-label="Page navigation">
-        <ul class="pagination pagination-lg">
-            <li class="disabled"><span aria-hidden="true">&laquo;</span></li>
-            <li class="active"><span>1 <span class="sr-only"></span></span></li>
-            <li><a href="#">2</a></li>
-            <li><a href="#">3</a></li>
-            <li><a href="#">4</a></li>
-            <li><a href="#"><span aria-hidden="true">&raquo;</span></a></li>
-        </ul>
-    </nav>
+    <ul id="page"></ul>
 </div>
+<{/block}>
+
+<{block name = jquery}>
+<script>
+    var num;
+    $.ajax({
+        url: "/main/pagination",
+        success: function(data) {
+            num = data.count;
+            $('#page').bootstrapPaginator({
+                bootstrapMajorVersion: 3,
+                currentPage: <{$page}>,
+                numberOfPages: 5,
+                totalPages: num,
+                shouldShowPage:function(type, page, current){
+                    switch(type)
+                    {
+                        case "first":
+                        case "last":
+                            return false;
+                        default:
+                            return true;
+                    }
+                },
+                useBootstrapTooltip: false,
+                size:'large',
+                pageUrl:function(type,page, current){
+                    return '/main/index?page='+page
+                },
+                itemTexts: function (type, page, current) {
+                    switch (type) {
+                    case "prev":
+                        return "上一页";
+                    case "next":
+                        return "下一页";
+                    case "page":
+                        return page;
+                    }
+                },
+                itemContainerClass: function (type, page, current) {
+                    return (page === current) ? "disabled" : "pointer-cursor";
+                }
+            });
+        }
+    });
+
+</script>
 <{/block}>

@@ -7,8 +7,11 @@ class Base_Controller extends CI_Controller {
         parent::__construct();
 
         // $this->_catalog();
+        $this->_tag();
         $this->_config();
         $this->_checkCatalog();
+        $query = "";
+        $this->smarty->assign('title', $query);
     }
 
     private function _catalog() {
@@ -26,6 +29,14 @@ class Base_Controller extends CI_Controller {
         $configinfo = $this->config_model->getAllConfig();
 
         $this->smarty->assign('config', $configinfo);
+    }
+
+    private function _tag() {
+        $this->load->model('tag_model');
+
+        $count = $this->tag_model->getTagCount();
+
+        $this->smarty->assign('tag', $count);
     }
 
     // public function checkCatalog($type) {

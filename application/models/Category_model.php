@@ -94,15 +94,19 @@ class Category_model extends CI_Model {
         return $category;
     }
 
-    public function getCategoryArticles($type_id) {
-        $this->db->from('articles');
+    public function getCategoryArticles($type_id, $page, $size) {
         $this->db->where('status !=', 0);
         $this->db->where('type_id', $type_id);
+        $count = $this->db->count_all_results('articles', FALSE);
+        $this->db->limit($size, ($page-1)*$size);
         $articlesinfo = $this->db->get()->result_array();
         foreach ($articlesinfo as &$v) {
             $v["updated"] = date("Y-m-d H:i:s", $v["updated"]);
         }
-        return $articlesinfo;
+        return array(
+            'count' => $count,
+            'articlesinfo' => $articlesinfo
+        );
     }
 
     public function getCategory($p_id) {
