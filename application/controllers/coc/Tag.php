@@ -73,6 +73,7 @@ class Tag extends AdminBase_Controller {
     }
 
     public function list() {
+        $this->checkSvip();
         $this->smarty->display('admin/tag/list.html');
     }
 
