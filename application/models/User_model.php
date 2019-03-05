@@ -78,7 +78,8 @@ class User_model extends CI_Model
         $this->db->where('username', $username);
         $usertag = $this->db->get()->row_array();
         if (isset($usertag)) {
-            return -5;
+            $result = "-5";
+            return $result;
         }
 
         // 检查邮箱是否存在
@@ -86,7 +87,8 @@ class User_model extends CI_Model
         $this->db->where('email', $email);
         $useremail = $this->db->get()->row_array();
         if (isset($useremail)) {
-            return -6;
+            $result = "-6";
+            return $result;
         }
 
         $salt = getRandomStr(32, false);
@@ -112,8 +114,9 @@ class User_model extends CI_Model
         $this->db->set('hash_password', $hashpass);
         $this->db->where('uid', $user["uid"]);
         $this->db->update('users');
+        $result = 1;
 
-        return true;
+        return $result;
     }
 
     //更改账户信息(超级账户功能)

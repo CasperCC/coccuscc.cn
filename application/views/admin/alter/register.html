@@ -16,7 +16,7 @@
         }
     </style>
 
-    <title>登录页面</title>
+    <title>注册页面</title>
 </head>
 
 
@@ -124,7 +124,7 @@
             $.ajax({
                 url: "/login/register",
                 type: "POST",
-                dataType: "JSON",
+                dataType: "json",
                 data: {
                     "username": userName,
                     "email": email,
@@ -134,13 +134,13 @@
                 },
                 success: function(data) {
                     var ret = data.ret;
-                    if (ret == -2) {
+                    if (ret == "-2") {
                         layer.msg('验证码错误', {icon: 2});
-                    } else if (ret == -5) {
+                    } else if (ret == "-5") {
                         layer.tips('该用户名已存在！', '#username', {tips: [2, '#A52A2A'], tipsMore: true});
-                    } else if (ret == -6) {
+                    } else if (ret == "-6") {
                         layer.tips('该邮箱已存在！', '#email', {tips: [2, '#A52A2A'], tipsMore: true});
-                    } else if (ret == -4 || ret == -1) {
+                    } else if (ret == "-4" || ret == "-1") {
                         layer.msg('注册失败');
                     } else {
                         layer.msg('注册成功！正在跳转到登录页面', {

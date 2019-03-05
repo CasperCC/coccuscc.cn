@@ -65,9 +65,9 @@ class Login extends CI_Controller {
 
         if (!$result) {
             db_error();
-        } elseif ($result == -5) {
+        } else if ($result == "-5") {
             username_exist();
-        } elseif ($result == -6) {
+        } else if ($result == "-6") {
             email_exist();
         } else {
             $this->session->unset_userdata('captcha');
