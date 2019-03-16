@@ -32,11 +32,12 @@ class AdminBase_Controller extends CI_Controller {
     }
 
     public function checkSvip() {
-    $svip = $this->administrator;
-    if ($svip == 0) {
-        $this->smarty->display('admin/nosvip.html');
-        exit();
+        $svip = $this->administrator;
+        if ($svip == 0) {
+            $this->smarty->display('admin/nosvip.html');
+            exit();
+        }
     }
-}
 
 }
+
