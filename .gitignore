@@ -3,6 +3,7 @@
 composer.lock
 
 /vendor/
+application/config/database.php
 
 # IDE Files
 #-------------------------
